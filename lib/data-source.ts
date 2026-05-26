@@ -7,6 +7,7 @@ import {
   startOfWeek,
 } from "date-fns";
 import { getMockProducts, getMockSales } from "./mock-data";
+import { loadDataDirCached } from "./loaders/file-system";
 import { MALLS } from "./mall-map";
 import { SITES } from "./sites";
 import { computeGrowth, previousPeriodMoM, previousPeriodYoY } from "./growth";
@@ -25,13 +26,36 @@ import type {
   SiteSeries,
 } from "./types";
 
+/**
+ * 데이터 소스 자동 선택:
+ *   - DATA_DIR 환경변수가 설정되어 있고 파일이 있으면 실제 파일 로드
+ *   - 아니면 더미 데이터 (UI 데모용)
+ */
+function loadSales(): Sale[] {
+  const dataDir = process.env.DATA_DIR?.trim();
+  if (dataDir) {
+    const result = loadDataDirCached(dataDir);
+    if (result.filesLoaded > 0) return result.sales;
+  }
+  return getMockSales();
+}
+
+function loadProducts(): Product[] {
+  const dataDir = process.env.DATA_DIR?.trim();
+  if (dataDir) {
+    const result = loadDataDirCached(dataDir);
+    if (result.filesLoaded > 0) return result.products;
+  }
+  return getMockProducts();
+}
+
 interface BaseQuery {
   siteFilter: SiteFilter;
   from: string;
   to: string;
 }
 
-function filterSales(query: BaseQuery, sales = getMockSales()): Sale[] {
+function filterSales(query: BaseQuery, sales = loadSales()): Sale[] {
   const fromDate = parseISO(query.from);
   const toDate = parseISO(query.to);
   return sales.filter((s) => {
@@ -168,7 +192,7 @@ export function getTopProducts(
   query: BaseQuery & { limit?: number },
 ): ProductRankRow[] {
   const limit = query.limit ?? 10;
-  const productsById = new Map(getMockProducts().map((p) => [p.id, p]));
+  const productsById = new Map(loadProducts().map((p) => [p.id, p]));
 
   const rank = (q: BaseQuery) => {
     const sales = filterSales(q);
@@ -219,7 +243,7 @@ export function getCategoryBreakdown(query: BaseQuery): {
   grossAmount: number;
 }[] {
   const sales = filterSales(query);
-  const productsById = new Map(getMockProducts().map((p) => [p.id, p]));
+  const productsById = new Map(loadProducts().map((p) => [p.id, p]));
   const map = new Map<string, { name: string; gross: number }>();
   for (const s of sales) {
     const product = productsById.get(s.productId);
@@ -247,7 +271,7 @@ export interface MallCategoryCell {
 
 export function getMallCategoryMatrix(query: BaseQuery): MallCategoryCell[] {
   const sales = filterSales(query);
-  const productsById = new Map(getMockProducts().map((p) => [p.id, p]));
+  const productsById = new Map(loadProducts().map((p) => [p.id, p]));
   const map = new Map<string, MallCategoryCell>();
   for (const s of sales) {
     const product = productsById.get(s.productId);

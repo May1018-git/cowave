@@ -7,13 +7,8 @@ export interface Site {
   color: string;
 }
 
-export type MallId =
-  | "naver"
-  | "coupang"
-  | "11st"
-  | "gmarket"
-  | "auction"
-  | "own";
+/** 쇼핑몰 코드. 외부 데이터의 숫자 ID를 그대로 사용 (예: "7861" = 쿠팡). */
+export type MallId = string;
 
 export interface Mall {
   id: MallId;

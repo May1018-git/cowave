@@ -34,3 +34,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# sample data files (local testing only, not committed)
+data/sample/**/*.xls
+data/sample/**/*.xlsx

@@ -24,81 +24,66 @@ function int(min: number, max: number) {
   return Math.floor(rand() * (max - min + 1)) + min;
 }
 
-const PRODUCT_TEMPLATES: { categoryCode: string; names: string[]; priceRange: [number, number] }[] = [
+/**
+ * 사용자 매핑(1511 라면/즉석밥/통조림)에 맞춘 상품 시드.
+ * 실제 데이터 소스가 붙기 전까지 UI 데모용.
+ */
+const PRODUCT_TEMPLATES: {
+  categoryCode: string;
+  names: string[];
+  priceRange: [number, number];
+}[] = [
   {
     categoryCode: "151101",
-    names: ["진라면 매운맛 5입", "신라면 5입", "안성탕면 5입", "너구리 5입"],
+    names: [
+      "진라면 매운맛 5입",
+      "신라면 5입",
+      "안성탕면 5입",
+      "너구리 5입",
+      "짜파게티 5입",
+    ],
     priceRange: [3500, 6500],
   },
   {
     categoryCode: "151102",
-    names: ["신라면 컵 6입", "왕뚜껑 6입", "육개장 컵라면 6입"],
-    priceRange: [5000, 8500],
+    names: ["오뚜기 옛날당면 500g", "백설 스파게티면 500g", "라이스페이퍼 300g"],
+    priceRange: [3500, 9500],
   },
   {
     categoryCode: "151103",
-    names: ["햇반 12입", "오뚜기밥 12입", "현미밥 8입"],
-    priceRange: [9900, 16500],
+    names: ["햇반 12입", "오뚜기밥 12입", "햇반 흑미밥 8입", "햇반 컵반 6입"],
+    priceRange: [9900, 19500],
   },
   {
-    categoryCode: "151201",
-    names: ["참치캔 200g x4", "스팸 클래식 200g x3", "꽁치통조림 400g"],
-    priceRange: [6500, 13500],
+    categoryCode: "151105",
+    names: [
+      "동원 참치캔 200g x4",
+      "스팸 클래식 200g x3",
+      "꽁치통조림 400g",
+      "오뚜기 후랑크 200g",
+      "캔햄 선물세트",
+    ],
+    priceRange: [6500, 35000],
   },
   {
-    categoryCode: "151202",
-    names: ["새우깡 6입", "포카칩 오리지널 6입", "초코파이 12입"],
-    priceRange: [4500, 9500],
+    categoryCode: "151108",
+    names: ["서울우유 체다치즈 200g", "앵커 무염버터 250g", "필라델피아 크림치즈 200g"],
+    priceRange: [5500, 12500],
   },
   {
-    categoryCode: "201101",
-    names: ["삼성 전자레인지 23L", "LG 전자레인지 32L"],
-    priceRange: [89000, 220000],
+    categoryCode: "151116",
+    names: ["오뚜기 3분카레 200g x4", "오뚜기 짜장 200g x4", "크노르 스프 5종"],
+    priceRange: [4900, 11500],
   },
   {
-    categoryCode: "201102",
-    names: ["테팔 에어프라이어 5.5L", "필립스 에어프라이어 XXL", "쿠쿠 에어프라이어 7L"],
-    priceRange: [129000, 320000],
-  },
-  {
-    categoryCode: "201201",
-    names: ["삼성 50인치 4K UHD", "LG 55인치 OLED", "삼성 65인치 QLED"],
-    priceRange: [490000, 2900000],
-  },
-  {
-    categoryCode: "301101",
-    names: ["베이직 반팔티", "오버핏 반팔티", "프린팅 티셔츠"],
-    priceRange: [9900, 39000],
-  },
-  {
-    categoryCode: "301201",
-    names: ["플라워 원피스", "린넨 롱원피스", "셔츠 원피스"],
-    priceRange: [29000, 89000],
-  },
-  {
-    categoryCode: "401101",
-    names: ["ASUS ROG 게이밍 노트북", "MSI Katana 17", "레노버 LOQ"],
-    priceRange: [1290000, 2890000],
-  },
-  {
-    categoryCode: "401102",
-    names: ["LG 그램 16", "삼성 갤럭시북 4", "ASUS Vivobook"],
-    priceRange: [890000, 2390000],
-  },
-  {
-    categoryCode: "401201",
-    names: ["로지텍 MX Keys", "한성 GK888", "키크론 K2"],
-    priceRange: [49000, 190000],
-  },
-  {
-    categoryCode: "401202",
-    names: ["로지텍 MX Master 3S", "MX Anywhere 3", "G PRO X SUPERLIGHT"],
-    priceRange: [59000, 169000],
-  },
-  {
-    categoryCode: "501101",
-    names: ["바이오던스 토너 패드", "닥터지 토너", "라운드랩 1025 토너"],
-    priceRange: [12900, 32000],
+    categoryCode: "151120",
+    names: [
+      "신라면 컵 6입",
+      "왕뚜껑 6입",
+      "육개장 컵라면 6입",
+      "튀김우동 컵 6입",
+    ],
+    priceRange: [5000, 9500],
   },
 ];
 
@@ -122,18 +107,38 @@ function buildProducts(): Product[] {
 const PRODUCTS = buildProducts();
 
 const SITE_CATEGORY_WEIGHT: Record<SiteId, Record<string, number>> = {
-  enuri: { "15": 1.4, "20": 1.0, "30": 0.9, "40": 0.7, "50": 1.1 },
-  danawa: { "15": 0.4, "20": 1.3, "30": 0.5, "40": 2.0, "50": 0.4 },
+  enuri: { "15": 1.4 },
+  danawa: { "15": 0.7 },
 };
 
+/** 실제 운영 점유율을 어림한 시드 가중치. */
 const MALL_WEIGHT: Record<MallId, number> = {
-  naver: 1.3,
-  coupang: 1.5,
-  "11st": 0.9,
-  gmarket: 0.8,
-  auction: 0.6,
-  own: 0.5,
+  "7861": 2.0, // 쿠팡
+  "6875": 1.7, // 스마트스토어
+  "536": 1.0, // G마켓
+  "4027": 0.9, // 옥션
+  "5910": 1.0, // 11번가
+  "374": 0.7, // 이마트몰
+  "6361": 0.6, // 홈플러스
+  "7455": 0.6, // 롯데마트몰
+  "47": 0.5, // 신세계몰
+  "49": 0.5, // 롯데ON
+  "57": 0.4, // 현대Hmall
+  "75": 0.4, // GS SHOP
+  "974": 0.4, // NS몰
+  "806": 0.4, // CJ온스타일
+  "663": 0.3, // 롯데홈쇼핑
+  "9011": 0.3, // SK스토아
+  "6193": 0.3, // 동원몰
+  "44244": 0.3, // 배민상회
+  "29297": 0.3, // 오늘의집
+  "5438": 0.3, // 우체국쇼핑
+  "20883": 0.2, // 쇼핑엔티
+  "6547": 0.3, // 롯데백화점
+  "46826": 0.2, // 어바웃펫
 };
+
+const MALL_IDS_WEIGHTED = MALLS.filter((m) => (MALL_WEIGHT[m.id] ?? 0) > 0);
 
 const PRODUCT_POPULARITY: Record<string, number> = PRODUCTS.reduce(
   (acc, p, i) => {
@@ -177,8 +182,9 @@ function generateSales(): Sale[] {
         const popularity = PRODUCT_POPULARITY[product.id];
         if (rand() > popularity * 0.85) continue;
 
-        const mall = pick(MALLS);
-        if (rand() > MALL_WEIGHT[mall.id] / 1.5) continue;
+        const mall = pick(MALL_IDS_WEIGHTED);
+        const mallWeight = MALL_WEIGHT[mall.id] ?? 0.5;
+        if (rand() > mallWeight / 2.0) continue;
 
         const quantity = int(1, 4);
         const unitJitter = 0.92 + rand() * 0.16;
