@@ -315,3 +315,16 @@ export function getCurrentMonthRange(): { from: string; to: string } {
     to: format(endOfMonth(today), "yyyy-MM-dd"),
   };
 }
+
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+export function resolveRange(
+  from: string | undefined,
+  to: string | undefined,
+  fallback: () => { from: string; to: string } = getCurrentMonthRange,
+): { from: string; to: string } {
+  if (from && to && ISO_DATE_RE.test(from) && ISO_DATE_RE.test(to) && from <= to) {
+    return { from, to };
+  }
+  return fallback();
+}

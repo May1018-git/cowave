@@ -1,18 +1,25 @@
 import { CategoryFilter } from "@/components/products/CategoryFilter";
 import { TopProductsTable } from "@/components/dashboard/TopProductsTable";
 import {
-  getCurrentMonthRange,
   getTopProducts,
+  resolveRange,
 } from "@/lib/data-source";
 import type { SiteFilter } from "@/lib/types";
 
 interface ProductsPageProps {
-  searchParams: { site?: string; cat1?: string; cat2?: string; cat3?: string };
+  searchParams: {
+    site?: string;
+    cat1?: string;
+    cat2?: string;
+    cat3?: string;
+    from?: string;
+    to?: string;
+  };
 }
 
 export default function ProductsPage({ searchParams }: ProductsPageProps) {
   const siteFilter = (searchParams.site as SiteFilter) ?? "all";
-  const range = getCurrentMonthRange();
+  const range = resolveRange(searchParams.from, searchParams.to);
   const categoryPrefix =
     searchParams.cat3 ?? searchParams.cat2 ?? searchParams.cat1 ?? "";
 

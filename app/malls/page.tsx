@@ -1,8 +1,8 @@
 import {
   getCategoryBreakdown,
-  getCurrentMonthRange,
   getMallBreakdown,
   getMallCategoryMatrix,
+  resolveRange,
 } from "@/lib/data-source";
 import { MALLS } from "@/lib/mall-map";
 import { formatKRW, formatNumber } from "@/lib/utils";
@@ -10,12 +10,12 @@ import type { SiteFilter } from "@/lib/types";
 import { MallBarChart } from "@/components/malls/MallBarChart";
 
 interface MallsPageProps {
-  searchParams: { site?: string };
+  searchParams: { site?: string; from?: string; to?: string };
 }
 
 export default function MallsPage({ searchParams }: MallsPageProps) {
   const siteFilter = (searchParams.site as SiteFilter) ?? "all";
-  const range = getCurrentMonthRange();
+  const range = resolveRange(searchParams.from, searchParams.to);
 
   const rows = getMallBreakdown({ siteFilter, ...range });
   const categories = getCategoryBreakdown({ siteFilter, ...range });

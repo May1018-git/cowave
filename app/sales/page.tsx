@@ -6,6 +6,7 @@ import {
   getCategoryBreakdown,
   getKpis,
   getSeries,
+  resolveRange,
 } from "@/lib/data-source";
 import {
   previousPeriodMoM,
@@ -16,7 +17,7 @@ import { cn, formatKRW, formatPercent } from "@/lib/utils";
 import type { Period, SiteFilter } from "@/lib/types";
 
 interface SalesPageProps {
-  searchParams: { site?: string; period?: string };
+  searchParams: { site?: string; period?: string; from?: string; to?: string };
 }
 
 function defaultRange(period: Period) {
@@ -35,7 +36,9 @@ function defaultRange(period: Period) {
 export default function SalesPage({ searchParams }: SalesPageProps) {
   const siteFilter = (searchParams.site as SiteFilter) ?? "all";
   const period = (searchParams.period as Period) ?? "day";
-  const range = defaultRange(period);
+  const range = resolveRange(searchParams.from, searchParams.to, () =>
+    defaultRange(period),
+  );
 
   const series = getSeries({ siteFilter, ...range, period });
   const prevYearSeries = getSeries({
