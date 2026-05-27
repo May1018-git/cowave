@@ -191,16 +191,18 @@ export function getMallBreakdown(query: BaseQuery): MallBreakdownRow[] {
 }
 
 export function getTopProducts(
-  query: BaseQuery & { limit?: number; categoryPrefix?: string },
+  query: BaseQuery & { limit?: number; categoryPrefix?: string; mallId?: string },
 ): ProductRankRow[] {
   const limit = query.limit ?? 10;
   const prefix = query.categoryPrefix?.trim() || "";
+  const mallId = query.mallId?.trim() || "";
   const productsById = new Map(loadProducts().map((p) => [p.id, p]));
 
   const rank = (q: BaseQuery) => {
     const sales = filterSales(q);
     const map = new Map<string, { gross: number; qty: number; commission: number }>();
     for (const s of sales) {
+      if (mallId && s.mallId !== mallId) continue;
       if (prefix) {
         const product = productsById.get(s.productId);
         if (!product || !product.categoryCode.startsWith(prefix)) continue;

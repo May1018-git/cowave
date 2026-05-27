@@ -44,7 +44,7 @@ export function SubCategoryTable({ rows }: SubCategoryTableProps) {
           <tr key={r.code} className="border-b last:border-b-0">
             <td className="py-2 pl-2 font-medium">{r.name}</td>
             <td className="py-2 text-right tabular-nums">
-              {formatKRW(r.grossAmount, { compact: true })}
+              {formatKRW(r.grossAmount)}
             </td>
             <td className="py-2 text-right tabular-nums text-gray-600">
               {formatNumber(r.orders)}

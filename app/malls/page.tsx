@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   getCategoryBreakdown,
   getMallBreakdown,
@@ -13,9 +14,18 @@ interface MallsPageProps {
   searchParams: { site?: string; from?: string; to?: string };
 }
 
+function buildQs(searchParams: Record<string, string | undefined>) {
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries(searchParams)) {
+    if (v) params.set(k, v);
+  }
+  return params.toString();
+}
+
 export default function MallsPage({ searchParams }: MallsPageProps) {
   const siteFilter = (searchParams.site as SiteFilter) ?? "all";
   const range = resolveRange(searchParams.from, searchParams.to);
+  const qs = buildQs(searchParams);
 
   const rows = getMallBreakdown({ siteFilter, ...range });
   const categories = getCategoryBreakdown({ siteFilter, ...range });
@@ -44,28 +54,34 @@ export default function MallsPage({ searchParams }: MallsPageProps) {
 
       <div className="card p-5">
         <h3 className="mb-3 text-sm font-semibold">쇼핑몰 상세</h3>
+        <p className="mb-2 text-[11px] text-gray-400">
+          쇼핑몰 이름을 클릭하면 해당 몰의 상품별 매출을 볼 수 있어요.
+        </p>
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b text-left text-xs text-gray-500">
               <th className="py-2 pl-2 font-medium">쇼핑몰</th>
               <th className="py-2 text-right font-medium">매출액</th>
               <th className="py-2 text-right font-medium">주문수</th>
-              <th className="py-2 text-right font-medium">수수료</th>
               <th className="py-2 pr-2 text-right font-medium">점유율</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
               <tr key={r.mallId} className="border-b last:border-b-0">
-                <td className="py-2 pl-2 font-medium">{r.mallName}</td>
+                <td className="py-2 pl-2 font-medium">
+                  <Link
+                    href={qs ? `/malls/${r.mallId}?${qs}` : `/malls/${r.mallId}`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    {r.mallName}
+                  </Link>
+                </td>
                 <td className="py-2 text-right tabular-nums">
-                  {formatKRW(r.grossAmount, { compact: true })}
+                  {formatKRW(r.grossAmount)}
                 </td>
                 <td className="py-2 text-right tabular-nums text-gray-600">
                   {formatNumber(r.orders)}
-                </td>
-                <td className="py-2 text-right tabular-nums text-gray-600">
-                  {formatKRW(r.commission, { compact: true })}
                 </td>
                 <td className="py-2 pr-2 text-right tabular-nums text-gray-600">
                   {(r.share * 100).toFixed(1)}%

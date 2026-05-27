@@ -84,6 +84,48 @@ function pad2(n: number): string {
   return n < 10 ? `0${n}` : `${n}`;
 }
 
+function normalizeKey(s: string): string {
+  return s.replace(/[\s ​-‏﻿]/g, "").trim();
+}
+
+/**
+ * 행에 있는 열 이름이 기대값과 정확히 일치하지 않는 경우(공백·zero-width
+ * 문자가 섞이거나, "체결일" 대신 "체결일자" 처럼 변형) 한 번만 스캔해서
+ * 매핑을 만들어 둔다.
+ */
+function buildHeaderMap(
+  sample: Record<string, unknown>,
+): Record<string, string> {
+  const map: Record<string, string> = {};
+  const allKeys = Object.keys(sample);
+  const normalizedKeys = allKeys.map((k) => [k, normalizeKey(k)] as const);
+  for (const [logical, expected] of Object.entries(ENURI_HEADERS)) {
+    void logical;
+    if (expected in sample) {
+      map[expected] = expected;
+      continue;
+    }
+    const target = normalizeKey(expected);
+    let found: string | undefined;
+    for (const [k, nk] of normalizedKeys) {
+      if (nk === target) {
+        found = k;
+        break;
+      }
+    }
+    if (!found) {
+      for (const [k, nk] of normalizedKeys) {
+        if (nk.includes(target)) {
+          found = k;
+          break;
+        }
+      }
+    }
+    if (found) map[expected] = found;
+  }
+  return map;
+}
+
 function normalizeDate(
   raw: unknown,
   fallback: string | null,
@@ -94,7 +136,6 @@ function normalizeDate(
     return `${raw.getFullYear()}-${pad2(raw.getMonth() + 1)}-${pad2(raw.getDate())}`;
   }
   if (typeof raw === "number" && Number.isFinite(raw)) {
-    // Excel 시리얼 (1900-01-01 기준, 1900년 윤년 버그 보정)
     const epoch = Date.UTC(1899, 11, 30);
     const ms = epoch + raw * 86400000;
     const d = new Date(ms);
@@ -102,14 +143,22 @@ function normalizeDate(
     return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())}`;
   }
   if (typeof raw === "string") {
-    const s = raw.trim();
-    if (!s) return fallback;
-    // YYYY-MM-DD, YYYY.MM.DD, YYYY/MM/DD (시간 부분은 무시)
-    const m = s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
-    if (m) return `${m[1]}-${pad2(Number(m[2]))}-${pad2(Number(m[3]))}`;
-    // YYYYMMDD
-    const m2 = s.match(/^(\d{4})(\d{2})(\d{2})$/);
-    if (m2) return `${m2[1]}-${m2[2]}-${m2[3]}`;
+    // HTML 태그·non-printable 문자 제거 후 연/월/일 추출
+    const cleaned = raw.replace(/<[^>]+>/g, "").trim();
+    if (!cleaned) return fallback;
+    // YYYYMMDD 8자리 통째
+    const m8 = cleaned.match(/^(\d{4})(\d{2})(\d{2})$/);
+    if (m8) return `${m8[1]}-${m8[2]}-${m8[3]}`;
+    // YYYY[separator]MM[separator]DD — 어떤 구분자든 OK
+    const m = cleaned.match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+    if (m) {
+      const y = Number(m[1]);
+      const mo = Number(m[2]);
+      const d = Number(m[3]);
+      if (y >= 2000 && y <= 2100 && mo >= 1 && mo <= 12 && d >= 1 && d <= 31) {
+        return `${y}-${pad2(mo)}-${pad2(d)}`;
+      }
+    }
   }
   return fallback;
 }
@@ -138,6 +187,24 @@ export function loadXlsxFile(
   if (rows.length === 0)
     return { sales: [], products: new Map(), warnings };
 
+  // 첫 행 기준으로 헤더 매핑 구축 (공백·zero-width·약간의 변형 흡수)
+  const headerMap = buildHeaderMap(rows[0]);
+  const getCol = (row: Record<string, unknown>, expected: string): unknown => {
+    const key = headerMap[expected] ?? expected;
+    return row[key];
+  };
+
+  // 진단: 헤더와 첫 행 일부를 PowerShell 에 한 번 찍어준다.
+  // 사용자가 컬럼 이름·날짜 포맷 문제를 알아볼 수 있도록.
+  // eslint-disable-next-line no-console
+  console.log(
+    `[xlsx] ${fileName}: ${rows.length}행, 헤더(${Object.keys(rows[0]).length}개)=${Object.keys(rows[0]).slice(0, 14).join("|")}`,
+  );
+  // eslint-disable-next-line no-console
+  console.log(
+    `[xlsx] ${fileName}: 체결일 매핑→"${headerMap[ENURI_HEADERS.date] ?? "(없음)"}", 첫 행 체결일 값="${String(getCol(rows[0], ENURI_HEADERS.date) ?? "(null)")}" (typeof=${typeof getCol(rows[0], ENURI_HEADERS.date)})`,
+  );
+
   const sales: Sale[] = [];
   const products = new Map<
     string,
@@ -152,12 +219,16 @@ export function loadXlsxFile(
   >();
   let idx = 0;
   let skippedMall = 0;
+  let fallbackDateCount = 0;
 
   for (const row of rows) {
-    const date = normalizeDate(row[ENURI_HEADERS.date], parsed?.from ?? null);
+    const dateRaw = getCol(row, ENURI_HEADERS.date);
+    const parsedDate = normalizeDate(dateRaw, null);
+    const date = parsedDate ?? parsed?.from ?? null;
     if (!date) continue;
+    if (parsedDate === null) fallbackDateCount += 1;
 
-    const mallRaw = row[ENURI_HEADERS.mall];
+    const mallRaw = getCol(row, ENURI_HEADERS.mall);
     const mallId = String(mallRaw ?? "").trim();
     if (!mallId) continue;
     if (!MALL_IDS.has(mallId)) {
@@ -165,19 +236,19 @@ export function loadXlsxFile(
       continue;
     }
 
-    const productCode = String(row[ENURI_HEADERS.productCode] ?? "").trim();
-    const modelRaw = String(row[ENURI_HEADERS.enuriModel] ?? "").trim();
+    const productCode = String(getCol(row, ENURI_HEADERS.productCode) ?? "").trim();
+    const modelRaw = String(getCol(row, ENURI_HEADERS.enuriModel) ?? "").trim();
     const hasModel = modelRaw !== "" && modelRaw !== "0";
     const productName =
-      String(row[ENURI_HEADERS.productName] ?? "").trim() ||
-      String(row[ENURI_HEADERS.mallProductName] ?? "").trim() ||
+      String(getCol(row, ENURI_HEADERS.productName) ?? "").trim() ||
+      String(getCol(row, ENURI_HEADERS.mallProductName) ?? "").trim() ||
       productCode;
     const productId = hasModel ? `M-${modelRaw}` : `C-${productCode}`;
-    const categoryCode = String(row[ENURI_HEADERS.category] ?? "").trim();
-    const manufacturer = String(row[ENURI_HEADERS.manufacturer] ?? "").trim();
+    const categoryCode = String(getCol(row, ENURI_HEADERS.category) ?? "").trim();
+    const manufacturer = String(getCol(row, ENURI_HEADERS.manufacturer) ?? "").trim();
 
-    const quantity = Number(row[ENURI_HEADERS.quantity] ?? 1) || 1;
-    const gross = Number(row[ENURI_HEADERS.gross] ?? 0) || 0;
+    const quantity = Number(getCol(row, ENURI_HEADERS.quantity) ?? 1) || 1;
+    const gross = Number(getCol(row, ENURI_HEADERS.gross) ?? 0) || 0;
     if (gross <= 0) continue;
 
     const rate = MALL_COMMISSION.get(mallId) ?? 0;
@@ -213,6 +284,15 @@ export function loadXlsxFile(
   if (skippedMall > 0) {
     warnings.push(
       `${fileName}: 매핑되지 않은 쇼핑몰 코드 ${skippedMall}행 건너뜀`,
+    );
+  }
+  // eslint-disable-next-line no-console
+  console.log(
+    `[xlsx] ${fileName}: 처리완료 sales=${sales.length}, 체결일 폴백=${fallbackDateCount}행 (파일명 시작일로 대체)`,
+  );
+  if (fallbackDateCount > 0 && fallbackDateCount === sales.length) {
+    warnings.push(
+      `${fileName}: 모든 행의 체결일 인식 실패 → 파일명 시작일로 대체됨. 일별 차트가 한 점으로 보임.`,
     );
   }
   return { sales, products, warnings };

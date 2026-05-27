@@ -48,7 +48,7 @@ export function ManufacturerTable({ rows }: ManufacturerTableProps) {
             </td>
             <td className="py-2 font-medium">{r.manufacturer}</td>
             <td className="py-2 text-right tabular-nums">
-              {formatKRW(r.grossAmount, { compact: true })}
+              {formatKRW(r.grossAmount)}
             </td>
             <td className="py-2 text-right tabular-nums text-gray-600">
               {formatNumber(r.orders)}

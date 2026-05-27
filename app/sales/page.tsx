@@ -1,11 +1,8 @@
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
-import { PeriodToggle } from "@/components/sales/PeriodToggle";
 import { CategoryStackChart } from "@/components/sales/CategoryStackChart";
 import { SubCategoryTable } from "@/components/sales/SubCategoryTable";
-import { SalesTrendChart } from "@/components/dashboard/SalesTrendChart";
 import {
   getKpis,
-  getSeries,
   getSubCategoryBreakdown,
   resolveRange,
 } from "@/lib/data-source";
@@ -15,19 +12,17 @@ import {
   computeGrowth,
 } from "@/lib/growth";
 import { cn, formatKRW, formatPercent } from "@/lib/utils";
-import type { Period, SiteFilter } from "@/lib/types";
+import type { SiteFilter } from "@/lib/types";
 
 interface SalesPageProps {
-  searchParams: { site?: string; period?: string; from?: string; to?: string };
+  searchParams: { site?: string; from?: string; to?: string };
 }
 
-function defaultRange(period: Period) {
+function defaultMonthRange() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const from = new Date(today);
-  if (period === "day") from.setDate(from.getDate() - 29);
-  if (period === "week") from.setDate(from.getDate() - 7 * 11);
-  if (period === "month") from.setMonth(from.getMonth() - 11);
+  from.setDate(from.getDate() - 29);
   return {
     from: from.toISOString().slice(0, 10),
     to: today.toISOString().slice(0, 10),
@@ -36,23 +31,11 @@ function defaultRange(period: Period) {
 
 export default function SalesPage({ searchParams }: SalesPageProps) {
   const siteFilter = (searchParams.site as SiteFilter) ?? "all";
-  const period = (searchParams.period as Period) ?? "day";
-  const range = resolveRange(searchParams.from, searchParams.to, () =>
-    defaultRange(period),
+  const range = resolveRange(
+    searchParams.from,
+    searchParams.to,
+    defaultMonthRange,
   );
-
-  const series = getSeries({ siteFilter, ...range, period });
-  const prevYearSeries = getSeries({
-    siteFilter,
-    ...previousPeriodYoY(range),
-    period,
-  }).map((s) => ({
-    ...s,
-    points: s.points.map((p, idx) => ({
-      ...p,
-      bucket: series[0]?.points[idx]?.bucket ?? p.bucket,
-    })),
-  }));
 
   const current = getKpis({ siteFilter, ...range });
   const yoy = getKpis({ siteFilter, ...previousPeriodYoY(range) });
@@ -64,14 +47,11 @@ export default function SalesPage({ searchParams }: SalesPageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-end justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">매출 상세</h2>
-          <p className="text-sm text-gray-500">
-            {range.from} ~ {range.to}
-          </p>
-        </div>
-        <PeriodToggle current={period} />
+      <div>
+        <h2 className="text-xl font-semibold">매출 상세</h2>
+        <p className="text-sm text-gray-500">
+          {range.from} ~ {range.to}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -95,14 +75,6 @@ export default function SalesPage({ searchParams }: SalesPageProps) {
           variant="mom"
           growth={momGrowth}
         />
-      </div>
-
-      <div className="card p-5">
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-semibold">기간별 매출 추이</h3>
-          <span className="text-[11px] text-gray-400">실선: 당기 · 점선: 전년 동기</span>
-        </div>
-        <SalesTrendChart series={series} previousYear={prevYearSeries} />
       </div>
 
       <div className="card p-5">
