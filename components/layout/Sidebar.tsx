@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Package,
   ShoppingBag,
+  Factory,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +16,7 @@ const NAV_ITEMS = [
   { href: "/sales", label: "매출 상세", icon: BarChart3 },
   { href: "/malls", label: "쇼핑몰 비교", icon: ShoppingBag },
   { href: "/products", label: "상품/카탈로그", icon: Package },
+  { href: "/brands", label: "제조사/브랜드", icon: Factory },
 ];
 
 export function Sidebar() {

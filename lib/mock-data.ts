@@ -87,6 +87,24 @@ const PRODUCT_TEMPLATES: {
   },
 ];
 
+function inferManufacturer(name: string): string {
+  const m: [RegExp, string][] = [
+    [/진라면|오뚜기|3분카레|3분 카레|짜장|후랑크|옛날당면/, "오뚜기"],
+    [/신라면|짜파게티|너구리|안성탕면|육개장/, "농심"],
+    [/햇반/, "CJ제일제당"],
+    [/스팸|백설|컵반/, "CJ제일제당"],
+    [/동원|참치캔/, "동원F&B"],
+    [/왕뚜껑|튀김우동/, "팔도"],
+    [/서울우유|체다치즈/, "서울우유"],
+    [/앵커/, "앵커"],
+    [/필라델피아/, "필라델피아"],
+    [/크노르/, "유니레버"],
+    [/꽁치통조림|캔햄|라이스페이퍼/, "기타"],
+  ];
+  for (const [re, brand] of m) if (re.test(name)) return brand;
+  return "기타";
+}
+
 function buildProducts(): Product[] {
   const products: Product[] = [];
   let idx = 0;
@@ -100,6 +118,7 @@ function buildProducts(): Product[] {
         categoryCode: tpl.categoryCode,
         modelNumber: `${1_000_000 + idx}`,
         productCode: id,
+        manufacturer: inferManufacturer(name),
         basePrice: int(tpl.priceRange[0], tpl.priceRange[1]),
       });
     }

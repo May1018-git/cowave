@@ -37,6 +37,7 @@ export interface LoadResult {
       categoryCode: string;
       modelNumber: string;
       productCode: string;
+      manufacturer: string;
     }
   >;
   warnings: string[];
@@ -79,6 +80,40 @@ function readSheetFromBuffer(
 const MALL_IDS = new Set(MALLS.map((m) => m.id));
 const MALL_COMMISSION = new Map(MALLS.map((m) => [m.id, m.commissionRate]));
 
+function pad2(n: number): string {
+  return n < 10 ? `0${n}` : `${n}`;
+}
+
+function normalizeDate(
+  raw: unknown,
+  fallback: string | null,
+): string | null {
+  if (raw == null || raw === "") return fallback;
+  if (raw instanceof Date) {
+    if (Number.isNaN(raw.getTime())) return fallback;
+    return `${raw.getFullYear()}-${pad2(raw.getMonth() + 1)}-${pad2(raw.getDate())}`;
+  }
+  if (typeof raw === "number" && Number.isFinite(raw)) {
+    // Excel 시리얼 (1900-01-01 기준, 1900년 윤년 버그 보정)
+    const epoch = Date.UTC(1899, 11, 30);
+    const ms = epoch + raw * 86400000;
+    const d = new Date(ms);
+    if (Number.isNaN(d.getTime())) return fallback;
+    return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())}`;
+  }
+  if (typeof raw === "string") {
+    const s = raw.trim();
+    if (!s) return fallback;
+    // YYYY-MM-DD, YYYY.MM.DD, YYYY/MM/DD (시간 부분은 무시)
+    const m = s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
+    if (m) return `${m[1]}-${pad2(Number(m[2]))}-${pad2(Number(m[3]))}`;
+    // YYYYMMDD
+    const m2 = s.match(/^(\d{4})(\d{2})(\d{2})$/);
+    if (m2) return `${m2[1]}-${m2[2]}-${m2[3]}`;
+  }
+  return fallback;
+}
+
 export function loadXlsxFile(
   buffer: Uint8Array,
   fileName: string,
@@ -112,17 +147,14 @@ export function loadXlsxFile(
       categoryCode: string;
       modelNumber: string;
       productCode: string;
+      manufacturer: string;
     }
   >();
   let idx = 0;
   let skippedMall = 0;
 
   for (const row of rows) {
-    const dateRaw = row[ENURI_HEADERS.date];
-    const date =
-      typeof dateRaw === "string" && dateRaw.length >= 10
-        ? dateRaw.slice(0, 10)
-        : parsed?.from ?? null;
+    const date = normalizeDate(row[ENURI_HEADERS.date], parsed?.from ?? null);
     if (!date) continue;
 
     const mallRaw = row[ENURI_HEADERS.mall];
@@ -142,6 +174,7 @@ export function loadXlsxFile(
       productCode;
     const productId = hasModel ? `M-${modelRaw}` : `C-${productCode}`;
     const categoryCode = String(row[ENURI_HEADERS.category] ?? "").trim();
+    const manufacturer = String(row[ENURI_HEADERS.manufacturer] ?? "").trim();
 
     const quantity = Number(row[ENURI_HEADERS.quantity] ?? 1) || 1;
     const gross = Number(row[ENURI_HEADERS.gross] ?? 0) || 0;
@@ -169,7 +202,11 @@ export function loadXlsxFile(
         categoryCode,
         modelNumber: hasModel ? modelRaw : "",
         productCode,
+        manufacturer,
       });
+    } else if (manufacturer) {
+      const existing = products.get(productId)!;
+      if (!existing.manufacturer) existing.manufacturer = manufacturer;
     }
   }
 
@@ -214,11 +251,7 @@ export function loadXlsxRaw(
 
   const rows: RawRow[] = [];
   for (const row of raw) {
-    const dateRaw = row[ENURI_HEADERS.date];
-    const date =
-      typeof dateRaw === "string" && dateRaw.length >= 10
-        ? dateRaw.slice(0, 10)
-        : parsed?.from ?? "";
+    const date = normalizeDate(row[ENURI_HEADERS.date], parsed?.from ?? null) ?? "";
     rows.push({
       date,
       siteId,

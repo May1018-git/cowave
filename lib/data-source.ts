@@ -270,27 +270,102 @@ export function getCategoryBreakdown(query: BaseQuery): {
     .sort((a, b) => b.grossAmount - a.grossAmount);
 }
 
-export function getSubCategoryBreakdown(query: BaseQuery): {
+export interface SubCategoryRow {
   code: string;
   name: string;
   grossAmount: number;
-}[] {
+  orders: number;
+  averageOrderValue: number;
+  growth: { yoy: GrowthMetric; mom: GrowthMetric };
+}
+
+function aggregateSubCategory(query: BaseQuery): Map<string, { name: string; gross: number; orders: number }> {
   const sales = filterSales(query);
   const productsById = new Map(loadProducts().map((p) => [p.id, p]));
-  const map = new Map<string, { name: string; gross: number }>();
+  const map = new Map<string, { name: string; gross: number; orders: number }>();
   const OTHER_KEY = "__other__";
   for (const s of sales) {
     const product = productsById.get(s.productId);
     const sub = product ? getSubCategory(product.categoryCode) : undefined;
     const key = sub?.code ?? OTHER_KEY;
     const name = sub?.name ?? "기타";
-    const acc = map.get(key) ?? { name, gross: 0 };
+    const acc = map.get(key) ?? { name, gross: 0, orders: 0 };
     acc.gross += s.grossAmount;
+    acc.orders += 1;
     map.set(key, acc);
   }
-  return [...map.entries()]
-    .map(([code, { name, gross }]) => ({ code, name, grossAmount: gross }))
+  return map;
+}
+
+export function getSubCategoryBreakdown(query: BaseQuery): SubCategoryRow[] {
+  const current = aggregateSubCategory(query);
+  const yoyPrev = aggregateSubCategory({ ...query, ...previousPeriodYoY(query) });
+  const momPrev = aggregateSubCategory({ ...query, ...previousPeriodMoM(query) });
+  return [...current.entries()]
+    .map(([code, { name, gross, orders }]) => ({
+      code,
+      name,
+      grossAmount: gross,
+      orders,
+      averageOrderValue: orders === 0 ? 0 : Math.round(gross / orders),
+      growth: {
+        yoy: computeGrowth(gross, yoyPrev.get(code)?.gross ?? 0),
+        mom: computeGrowth(gross, momPrev.get(code)?.gross ?? 0),
+      },
+    }))
     .sort((a, b) => b.grossAmount - a.grossAmount);
+}
+
+export interface ManufacturerRow {
+  manufacturer: string;
+  grossAmount: number;
+  orders: number;
+  averageOrderValue: number;
+  growth: { yoy: GrowthMetric; mom: GrowthMetric };
+}
+
+function aggregateManufacturer(
+  query: BaseQuery,
+  prefix: string,
+): Map<string, { gross: number; orders: number }> {
+  const sales = filterSales(query);
+  const productsById = new Map(loadProducts().map((p) => [p.id, p]));
+  const map = new Map<string, { gross: number; orders: number }>();
+  for (const s of sales) {
+    const product = productsById.get(s.productId);
+    if (prefix) {
+      if (!product || !product.categoryCode.startsWith(prefix)) continue;
+    }
+    const manu = (product?.manufacturer || "").trim() || "기타";
+    const acc = map.get(manu) ?? { gross: 0, orders: 0 };
+    acc.gross += s.grossAmount;
+    acc.orders += 1;
+    map.set(manu, acc);
+  }
+  return map;
+}
+
+export function getTopManufacturers(
+  query: BaseQuery & { limit?: number; categoryPrefix?: string },
+): ManufacturerRow[] {
+  const limit = query.limit ?? 20;
+  const prefix = query.categoryPrefix?.trim() || "";
+  const current = aggregateManufacturer(query, prefix);
+  const yoyPrev = aggregateManufacturer({ ...query, ...previousPeriodYoY(query) }, prefix);
+  const momPrev = aggregateManufacturer({ ...query, ...previousPeriodMoM(query) }, prefix);
+  return [...current.entries()]
+    .map(([manufacturer, { gross, orders }]) => ({
+      manufacturer,
+      grossAmount: gross,
+      orders,
+      averageOrderValue: orders === 0 ? 0 : Math.round(gross / orders),
+      growth: {
+        yoy: computeGrowth(gross, yoyPrev.get(manufacturer)?.gross ?? 0),
+        mom: computeGrowth(gross, momPrev.get(manufacturer)?.gross ?? 0),
+      },
+    }))
+    .sort((a, b) => b.grossAmount - a.grossAmount)
+    .slice(0, limit);
 }
 
 export interface MallCategoryCell {

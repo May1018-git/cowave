@@ -1,6 +1,7 @@
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { PeriodToggle } from "@/components/sales/PeriodToggle";
 import { CategoryStackChart } from "@/components/sales/CategoryStackChart";
+import { SubCategoryTable } from "@/components/sales/SubCategoryTable";
 import { SalesTrendChart } from "@/components/dashboard/SalesTrendChart";
 import {
   getKpis,
@@ -107,6 +108,11 @@ export default function SalesPage({ searchParams }: SalesPageProps) {
       <div className="card p-5">
         <h3 className="mb-3 text-sm font-semibold">소분류 카테고리별 매출</h3>
         <CategoryStackChart rows={categoryRows} />
+      </div>
+
+      <div className="card p-5">
+        <h3 className="mb-3 text-sm font-semibold">소분류 카테고리 상세</h3>
+        <SubCategoryTable rows={categoryRows} />
       </div>
     </div>
   );

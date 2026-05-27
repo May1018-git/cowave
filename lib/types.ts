@@ -30,6 +30,7 @@ export interface Product {
   categoryCode: string;
   modelNumber?: string;
   productCode?: string;
+  manufacturer?: string;
   imageUrl?: string;
   basePrice: number;
 }

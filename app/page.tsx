@@ -88,7 +88,7 @@ export default function Home({ searchParams }: HomeProps) {
         />
         <KpiCard
           label="평균 객단가"
-          value={formatKRW(kpi.averageOrderValue, { compact: true })}
+          value={`${formatKRW(kpi.averageOrderValue)}원`}
         />
         <KpiCard
           label="활성 쇼핑몰"
