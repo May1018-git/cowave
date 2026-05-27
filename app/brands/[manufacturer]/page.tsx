@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import {
   getMallBreakdown,
   getTopProducts,
+  resolveCategoryPrefix,
   resolveRange,
 } from "@/lib/data-source";
 import { formatKRW, formatNumber } from "@/lib/utils";
@@ -11,7 +12,15 @@ import type { SiteFilter } from "@/lib/types";
 
 interface ManufacturerDetailPageProps {
   params: { manufacturer: string };
-  searchParams: { site?: string; from?: string; to?: string };
+  searchParams: {
+    site?: string;
+    from?: string;
+    to?: string;
+    cat?: string;
+    cat1?: string;
+    cat2?: string;
+    cat3?: string;
+  };
 }
 
 export default function ManufacturerDetailPage({
@@ -21,15 +30,22 @@ export default function ManufacturerDetailPage({
   const manufacturer = decodeURIComponent(params.manufacturer);
   const siteFilter = (searchParams.site as SiteFilter) ?? "all";
   const range = resolveRange(searchParams.from, searchParams.to);
+  const categoryPrefix = resolveCategoryPrefix(searchParams);
 
   const products = getTopProducts({
     siteFilter,
     ...range,
+    categoryPrefix,
     limit: 50,
     manufacturer,
   });
 
-  const mallRows = getMallBreakdown({ siteFilter, ...range, manufacturer });
+  const mallRows = getMallBreakdown({
+    siteFilter,
+    ...range,
+    categoryPrefix,
+    manufacturer,
+  });
   const activeMallRows = mallRows.filter((r) => r.grossAmount > 0);
 
   const totalGross = products.reduce((acc, r) => acc + r.grossAmount, 0);

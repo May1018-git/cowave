@@ -11,7 +11,7 @@ import { loadDataDirCached } from "./loaders/file-system";
 import { MALLS } from "./mall-map";
 import { SITES } from "./sites";
 import { computeGrowth, previousPeriodMoM, previousPeriodYoY } from "./growth";
-import { getSubCategory, getTopCategory } from "./category-map";
+import { getMidCategory, getSubCategory, getTopCategory } from "./category-map";
 import type {
   GrowthMetric,
   MallBreakdownRow,
@@ -53,16 +53,69 @@ interface BaseQuery {
   siteFilter: SiteFilter;
   from: string;
   to: string;
+  /** 카테고리 코드 prefix 로 매출을 필터링. 비어있으면 전체. */
+  categoryPrefix?: string;
 }
 
 function filterSales(query: BaseQuery, sales = loadSales()): Sale[] {
   const fromDate = parseISO(query.from);
   const toDate = parseISO(query.to);
+  const prefix = query.categoryPrefix?.trim() || "";
+  const productsById = prefix
+    ? new Map(loadProducts().map((p) => [p.id, p]))
+    : null;
   return sales.filter((s) => {
     if (query.siteFilter !== "all" && s.siteId !== query.siteFilter) return false;
+    if (productsById) {
+      const p = productsById.get(s.productId);
+      if (!p || !p.categoryCode.startsWith(prefix)) return false;
+    }
     const d = parseISO(s.date);
     return isWithinInterval(d, { start: fromDate, end: toDate });
   });
+}
+
+/**
+ * URL searchParams 에서 유효한 카테고리 prefix 를 추출한다.
+ *  - cat3/cat2/cat1 (드릴다운) > cat (토글)
+ *  - 드릴다운이 토글 범위 밖이면 토글만 사용
+ */
+export function resolveCategoryPrefix(searchParams: {
+  cat?: string;
+  cat1?: string;
+  cat2?: string;
+  cat3?: string;
+}): string | undefined {
+  const top = searchParams.cat?.trim() || "";
+  const drill =
+    searchParams.cat3?.trim() ||
+    searchParams.cat2?.trim() ||
+    searchParams.cat1?.trim() ||
+    "";
+  if (drill && (!top || drill.startsWith(top))) return drill;
+  return top || undefined;
+}
+
+/**
+ * 로드된 데이터에 실제로 존재하는 중분류 (4자리) 카테고리 목록.
+ * 사용자 데이터 자동 스캔으로 토글 옵션을 구성한다.
+ */
+export function getAvailableMidCategories(): {
+  code: string;
+  name: string;
+}[] {
+  const products = loadProducts();
+  const codes = new Set<string>();
+  for (const p of products) {
+    const mid = getMidCategory(p.categoryCode);
+    if (mid) codes.add(mid.code);
+  }
+  return [...codes]
+    .map((code) => {
+      const mid = getMidCategory(code);
+      return { code, name: mid?.name ?? code };
+    })
+    .sort((a, b) => a.code.localeCompare(b.code));
 }
 
 function bucketKey(date: string, period: Period): string {

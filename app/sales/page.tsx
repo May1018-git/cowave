@@ -4,6 +4,7 @@ import { SubCategoryTable } from "@/components/sales/SubCategoryTable";
 import {
   getKpis,
   getSubCategoryBreakdown,
+  resolveCategoryPrefix,
   resolveRange,
 } from "@/lib/data-source";
 import {
@@ -15,7 +16,15 @@ import { cn, formatKRW, formatPercent } from "@/lib/utils";
 import type { SiteFilter } from "@/lib/types";
 
 interface SalesPageProps {
-  searchParams: { site?: string; from?: string; to?: string };
+  searchParams: {
+    site?: string;
+    from?: string;
+    to?: string;
+    cat?: string;
+    cat1?: string;
+    cat2?: string;
+    cat3?: string;
+  };
 }
 
 function defaultMonthRange() {
@@ -37,13 +46,26 @@ export default function SalesPage({ searchParams }: SalesPageProps) {
     defaultMonthRange,
   );
 
-  const current = getKpis({ siteFilter, ...range });
-  const yoy = getKpis({ siteFilter, ...previousPeriodYoY(range) });
-  const mom = getKpis({ siteFilter, ...previousPeriodMoM(range) });
+  const categoryPrefix = resolveCategoryPrefix(searchParams);
+  const current = getKpis({ siteFilter, ...range, categoryPrefix });
+  const yoy = getKpis({
+    siteFilter,
+    ...previousPeriodYoY(range),
+    categoryPrefix,
+  });
+  const mom = getKpis({
+    siteFilter,
+    ...previousPeriodMoM(range),
+    categoryPrefix,
+  });
   const yoyGrowth = computeGrowth(current.grossAmount, yoy.grossAmount);
   const momGrowth = computeGrowth(current.grossAmount, mom.grossAmount);
 
-  const categoryRows = getSubCategoryBreakdown({ siteFilter, ...range });
+  const categoryRows = getSubCategoryBreakdown({
+    siteFilter,
+    ...range,
+    categoryPrefix,
+  });
 
   return (
     <div className="space-y-6">

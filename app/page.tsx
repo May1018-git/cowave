@@ -10,6 +10,7 @@ import {
   getMallBreakdown,
   getSeries,
   getTopProducts,
+  resolveCategoryPrefix,
   resolveRange,
 } from "@/lib/data-source";
 import { previousPeriodYoY } from "@/lib/growth";
@@ -17,7 +18,15 @@ import { formatKRW, formatNumber } from "@/lib/utils";
 import type { SiteFilter } from "@/lib/types";
 
 interface HomeProps {
-  searchParams: { site?: string; from?: string; to?: string };
+  searchParams: {
+    site?: string;
+    from?: string;
+    to?: string;
+    cat?: string;
+    cat1?: string;
+    cat2?: string;
+    cat3?: string;
+  };
 }
 
 export default function Home({ searchParams }: HomeProps) {
@@ -25,13 +34,20 @@ export default function Home({ searchParams }: HomeProps) {
   const range = resolveRange(searchParams.from, searchParams.to);
   const usingCustomRange = Boolean(searchParams.from && searchParams.to);
   const trendRange = usingCustomRange ? range : getDataLast30Range();
+  const categoryPrefix = resolveCategoryPrefix(searchParams);
 
-  const kpi = getKpis({ siteFilter, ...range });
-  const growth = getKpiGrowth({ siteFilter, ...range });
-  const series = getSeries({ siteFilter, ...trendRange, period: "day" });
+  const kpi = getKpis({ siteFilter, ...range, categoryPrefix });
+  const growth = getKpiGrowth({ siteFilter, ...range, categoryPrefix });
+  const series = getSeries({
+    siteFilter,
+    ...trendRange,
+    categoryPrefix,
+    period: "day",
+  });
   const prevSeries = getSeries({
     siteFilter,
     ...previousPeriodYoY(trendRange),
+    categoryPrefix,
     period: "day",
   }).map((s) => ({
     ...s,
@@ -40,8 +56,13 @@ export default function Home({ searchParams }: HomeProps) {
       bucket: series[0]?.points[idx]?.bucket ?? p.bucket,
     })),
   }));
-  const mallBreakdown = getMallBreakdown({ siteFilter, ...range });
-  const topProducts = getTopProducts({ siteFilter, ...range, limit: 20 });
+  const mallBreakdown = getMallBreakdown({ siteFilter, ...range, categoryPrefix });
+  const topProducts = getTopProducts({
+    siteFilter,
+    ...range,
+    categoryPrefix,
+    limit: 20,
+  });
 
   const showSiteBreakdown = siteFilter === "all" && SITES.length > 1;
   const perSiteSub = showSiteBreakdown ? (

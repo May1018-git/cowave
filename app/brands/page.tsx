@@ -1,11 +1,16 @@
 import { CategoryFilter } from "@/components/products/CategoryFilter";
 import { ManufacturerTable } from "@/components/brands/ManufacturerTable";
-import { getTopManufacturers, resolveRange } from "@/lib/data-source";
+import {
+  getTopManufacturers,
+  resolveCategoryPrefix,
+  resolveRange,
+} from "@/lib/data-source";
 import type { SiteFilter } from "@/lib/types";
 
 interface BrandsPageProps {
   searchParams: {
     site?: string;
+    cat?: string;
     cat1?: string;
     cat2?: string;
     cat3?: string;
@@ -17,14 +22,13 @@ interface BrandsPageProps {
 export default function BrandsPage({ searchParams }: BrandsPageProps) {
   const siteFilter = (searchParams.site as SiteFilter) ?? "all";
   const range = resolveRange(searchParams.from, searchParams.to);
-  const categoryPrefix =
-    searchParams.cat3 ?? searchParams.cat2 ?? searchParams.cat1 ?? "";
+  const categoryPrefix = resolveCategoryPrefix(searchParams);
 
   const rows = getTopManufacturers({
     siteFilter,
     ...range,
     limit: 20,
-    categoryPrefix: categoryPrefix || undefined,
+    categoryPrefix,
   });
 
   const qsParams = new URLSearchParams();

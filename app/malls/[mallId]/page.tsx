@@ -4,6 +4,7 @@ import { getMall } from "@/lib/mall-map";
 import {
   getMallBreakdown,
   getTopProducts,
+  resolveCategoryPrefix,
   resolveRange,
 } from "@/lib/data-source";
 import { formatKRW, formatNumber } from "@/lib/utils";
@@ -12,7 +13,15 @@ import type { SiteFilter } from "@/lib/types";
 
 interface MallDetailPageProps {
   params: { mallId: string };
-  searchParams: { site?: string; from?: string; to?: string };
+  searchParams: {
+    site?: string;
+    from?: string;
+    to?: string;
+    cat?: string;
+    cat1?: string;
+    cat2?: string;
+    cat3?: string;
+  };
 }
 
 export default function MallDetailPage({
@@ -22,16 +31,20 @@ export default function MallDetailPage({
   const mall = getMall(params.mallId);
   const siteFilter = (searchParams.site as SiteFilter) ?? "all";
   const range = resolveRange(searchParams.from, searchParams.to);
+  const categoryPrefix = resolveCategoryPrefix(searchParams);
 
   const products = getTopProducts({
     siteFilter,
     ...range,
+    categoryPrefix,
     limit: 100,
     mallId: params.mallId,
   });
-  const breakdown = getMallBreakdown({ siteFilter, ...range }).find(
-    (b) => b.mallId === params.mallId,
-  );
+  const breakdown = getMallBreakdown({
+    siteFilter,
+    ...range,
+    categoryPrefix,
+  }).find((b) => b.mallId === params.mallId);
 
   const qs = new URLSearchParams();
   for (const [k, v] of Object.entries(searchParams)) {
