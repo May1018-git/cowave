@@ -38,7 +38,33 @@ function RankChange({ rank, prevRank }: { rank: number; prevRank: number | null 
   );
 }
 
+function ProductCodeCell({
+  modelNumber,
+  productCode,
+}: {
+  modelNumber?: string;
+  productCode?: string;
+}) {
+  if (modelNumber) {
+    return (
+      <span className="tabular-nums text-xs text-gray-600">{modelNumber}</span>
+    );
+  }
+  if (productCode) {
+    return (
+      <span
+        className="inline-flex items-center gap-1 rounded bg-gray-100 px-1.5 py-0.5 text-[11px] tabular-nums text-gray-500"
+        title="에누리 모델번호 미매핑 — 상품코드 표시"
+      >
+        {productCode}
+      </span>
+    );
+  }
+  return <span className="text-xs text-gray-300">—</span>;
+}
+
 export function TopProductsTable({ rows, compact }: TopProductsTableProps) {
+  const colSpan = compact ? 5 : 7;
   return (
     <table className="w-full text-sm">
       <thead>
@@ -46,6 +72,7 @@ export function TopProductsTable({ rows, compact }: TopProductsTableProps) {
           <th className="py-2 pl-2 font-medium">#</th>
           <th className="py-2 font-medium">상품</th>
           {!compact && <th className="py-2 font-medium">카테고리</th>}
+          {!compact && <th className="py-2 font-medium">모델번호/상품코드</th>}
           <th className="py-2 text-right font-medium">매출</th>
           <th className="py-2 text-right font-medium">수량</th>
           <th className="py-2 pr-2 text-right font-medium">YoY</th>
@@ -70,6 +97,14 @@ export function TopProductsTable({ rows, compact }: TopProductsTableProps) {
                 {getCategoryPath(r.product.categoryCode).join(" › ")}
               </td>
             )}
+            {!compact && (
+              <td className="py-2">
+                <ProductCodeCell
+                  modelNumber={r.product.modelNumber}
+                  productCode={r.product.productCode}
+                />
+              </td>
+            )}
             <td className="py-2 text-right tabular-nums">
               {formatKRW(r.grossAmount, { compact: true })}
             </td>
@@ -91,7 +126,7 @@ export function TopProductsTable({ rows, compact }: TopProductsTableProps) {
         ))}
         {rows.length === 0 && (
           <tr>
-            <td colSpan={6} className="py-8 text-center text-sm text-gray-400">
+            <td colSpan={colSpan} className="py-8 text-center text-sm text-gray-400">
               데이터가 없습니다
             </td>
           </tr>

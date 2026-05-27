@@ -29,7 +29,16 @@ export const ENURI_HEADERS = {
 export interface LoadResult {
   sales: Sale[];
   /** 행에서 추출한 상품 정보 (id → Product 단편) */
-  products: Map<string, { id: string; name: string; categoryCode: string }>;
+  products: Map<
+    string,
+    {
+      id: string;
+      name: string;
+      categoryCode: string;
+      modelNumber: string;
+      productCode: string;
+    }
+  >;
   warnings: string[];
 }
 
@@ -97,7 +106,13 @@ export function loadXlsxFile(
   const sales: Sale[] = [];
   const products = new Map<
     string,
-    { id: string; name: string; categoryCode: string }
+    {
+      id: string;
+      name: string;
+      categoryCode: string;
+      modelNumber: string;
+      productCode: string;
+    }
   >();
   let idx = 0;
   let skippedMall = 0;
@@ -119,11 +134,13 @@ export function loadXlsxFile(
     }
 
     const productCode = String(row[ENURI_HEADERS.productCode] ?? "").trim();
+    const modelRaw = String(row[ENURI_HEADERS.enuriModel] ?? "").trim();
+    const hasModel = modelRaw !== "" && modelRaw !== "0";
     const productName =
       String(row[ENURI_HEADERS.productName] ?? "").trim() ||
       String(row[ENURI_HEADERS.mallProductName] ?? "").trim() ||
       productCode;
-    const productId = `${mallId}-${productCode}`;
+    const productId = hasModel ? `M-${modelRaw}` : `C-${productCode}`;
     const categoryCode = String(row[ENURI_HEADERS.category] ?? "").trim();
 
     const quantity = Number(row[ENURI_HEADERS.quantity] ?? 1) || 1;
@@ -150,6 +167,8 @@ export function loadXlsxFile(
         id: productId,
         name: productName,
         categoryCode,
+        modelNumber: hasModel ? modelRaw : "",
+        productCode,
       });
     }
   }

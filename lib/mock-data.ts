@@ -93,10 +93,13 @@ function buildProducts(): Product[] {
   for (const tpl of PRODUCT_TEMPLATES) {
     for (const name of tpl.names) {
       idx += 1;
+      const id = `P${idx.toString().padStart(4, "0")}`;
       products.push({
-        id: `P${idx.toString().padStart(4, "0")}`,
+        id,
         name,
         categoryCode: tpl.categoryCode,
+        modelNumber: `${1_000_000 + idx}`,
+        productCode: id,
         basePrice: int(tpl.priceRange[0], tpl.priceRange[1]),
       });
     }

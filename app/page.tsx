@@ -4,6 +4,7 @@ import { MallShareChart } from "@/components/dashboard/MallShareChart";
 import { TopProductsTable } from "@/components/dashboard/TopProductsTable";
 import { SITES } from "@/lib/sites";
 import {
+  getDataLast30Range,
   getKpiGrowth,
   getKpis,
   getMallBreakdown,
@@ -23,17 +24,7 @@ export default function Home({ searchParams }: HomeProps) {
   const siteFilter = (searchParams.site as SiteFilter) ?? "all";
   const range = resolveRange(searchParams.from, searchParams.to);
   const usingCustomRange = Boolean(searchParams.from && searchParams.to);
-  const trendRange = usingCustomRange
-    ? range
-    : (() => {
-        const t = new Date();
-        const f = new Date();
-        f.setDate(f.getDate() - 29);
-        return {
-          from: f.toISOString().slice(0, 10),
-          to: t.toISOString().slice(0, 10),
-        };
-      })();
+  const trendRange = usingCustomRange ? range : getDataLast30Range();
 
   const kpi = getKpis({ siteFilter, ...range });
   const growth = getKpiGrowth({ siteFilter, ...range });
@@ -117,8 +108,13 @@ export default function Home({ searchParams }: HomeProps) {
           <SalesTrendChart series={series} previousYear={prevSeries} />
         </div>
         <div className="card p-5">
-          <h3 className="mb-3 text-sm font-semibold">쇼핑몰별 점유율</h3>
-          <MallShareChart rows={mallBreakdown} />
+          <h3 className="mb-3 text-sm font-semibold">
+            쇼핑몰별 점유율
+            <span className="ml-1 text-xs font-normal text-gray-400">
+              (TOP 10)
+            </span>
+          </h3>
+          <MallShareChart rows={mallBreakdown.slice(0, 10)} />
         </div>
       </div>
 

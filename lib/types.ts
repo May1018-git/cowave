@@ -28,6 +28,8 @@ export interface Product {
   id: string;
   name: string;
   categoryCode: string;
+  modelNumber?: string;
+  productCode?: string;
   imageUrl?: string;
   basePrice: number;
 }

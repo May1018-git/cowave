@@ -307,6 +307,26 @@ export function getDefaultRange(period: Period = "day"): { from: string; to: str
   };
 }
 
+export function getLatestDataDate(): string | null {
+  const sales = loadSales();
+  if (sales.length === 0) return null;
+  let max = sales[0].date;
+  for (const s of sales) if (s.date > max) max = s.date;
+  return max;
+}
+
+export function getDataLast30Range(): { from: string; to: string } {
+  const latest = getLatestDataDate();
+  if (!latest) return getCurrentMonthRange();
+  const to = parseISO(latest);
+  const from = new Date(to);
+  from.setDate(from.getDate() - 29);
+  return {
+    from: format(from, "yyyy-MM-dd"),
+    to: format(to, "yyyy-MM-dd"),
+  };
+}
+
 export function getCurrentMonthRange(): { from: string; to: string } {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
