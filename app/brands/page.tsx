@@ -27,6 +27,12 @@ export default function BrandsPage({ searchParams }: BrandsPageProps) {
     categoryPrefix: categoryPrefix || undefined,
   });
 
+  const qsParams = new URLSearchParams();
+  for (const [k, v] of Object.entries(searchParams)) {
+    if (v) qsParams.set(k, v);
+  }
+  const qs = qsParams.toString();
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -40,7 +46,10 @@ export default function BrandsPage({ searchParams }: BrandsPageProps) {
       </div>
 
       <div className="card p-5">
-        <ManufacturerTable rows={rows} />
+        <p className="mb-2 text-[11px] text-gray-400">
+          제조사 이름을 클릭하면 해당 제조사의 상세 매출을 볼 수 있어요.
+        </p>
+        <ManufacturerTable rows={rows} qs={qs} />
       </div>
     </div>
   );

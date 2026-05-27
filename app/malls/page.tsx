@@ -5,6 +5,7 @@ import {
   getMallCategoryMatrix,
   resolveRange,
 } from "@/lib/data-source";
+import { previousPeriodYoY } from "@/lib/growth";
 import { MALLS } from "@/lib/mall-map";
 import { formatKRW, formatNumber } from "@/lib/utils";
 import type { SiteFilter } from "@/lib/types";
@@ -28,6 +29,12 @@ export default function MallsPage({ searchParams }: MallsPageProps) {
   const qs = buildQs(searchParams);
 
   const rows = getMallBreakdown({ siteFilter, ...range });
+  const yoyRange = previousPeriodYoY(range);
+  const yoyRows = getMallBreakdown({ siteFilter, ...yoyRange });
+  const yoyByMallId = new Map(yoyRows.map((r) => [r.mallId, r.grossAmount]));
+  const chartRows = rows.filter(
+    (r) => r.grossAmount > 0 || (yoyByMallId.get(r.mallId) ?? 0) > 0,
+  );
   const categories = getCategoryBreakdown({ siteFilter, ...range });
   const matrix = getMallCategoryMatrix({ siteFilter, ...range });
 
@@ -48,7 +55,7 @@ export default function MallsPage({ searchParams }: MallsPageProps) {
       <div className="card p-5">
         <h3 className="mb-3 text-sm font-semibold">쇼핑몰별 매출</h3>
         <MallBarChart
-          data={rows.map((r) => ({ name: r.mallName, value: r.grossAmount }))}
+          data={chartRows.map((r) => ({ name: r.mallName, value: r.grossAmount }))}
         />
       </div>
 

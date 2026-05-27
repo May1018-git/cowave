@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { ArrowDown, ArrowUp, Minus } from "lucide-react";
 import { cn, formatKRW, formatNumber, formatPercent } from "@/lib/utils";
 import type { ManufacturerRow } from "@/lib/data-source";
 
 interface ManufacturerTableProps {
   rows: ManufacturerRow[];
+  qs?: string;
 }
 
 function GrowthCell({ percent }: { percent: number | null }) {
@@ -26,7 +28,7 @@ function GrowthCell({ percent }: { percent: number | null }) {
   );
 }
 
-export function ManufacturerTable({ rows }: ManufacturerTableProps) {
+export function ManufacturerTable({ rows, qs }: ManufacturerTableProps) {
   return (
     <table className="w-full text-sm">
       <thead>
@@ -46,7 +48,18 @@ export function ManufacturerTable({ rows }: ManufacturerTableProps) {
             <td className="py-2 pl-2 text-sm font-semibold text-gray-700">
               {i + 1}
             </td>
-            <td className="py-2 font-medium">{r.manufacturer}</td>
+            <td className="py-2 font-medium">
+              {r.manufacturer && r.manufacturer !== "기타" ? (
+                <Link
+                  href={`/brands/${encodeURIComponent(r.manufacturer)}${qs ? `?${qs}` : ""}`}
+                  className="text-blue-600 hover:underline"
+                >
+                  {r.manufacturer}
+                </Link>
+              ) : (
+                r.manufacturer
+              )}
+            </td>
             <td className="py-2 text-right tabular-nums">
               {formatKRW(r.grossAmount)}
             </td>

@@ -170,8 +170,18 @@ export function getKpiGrowth(query: BaseQuery): {
   };
 }
 
-export function getMallBreakdown(query: BaseQuery): MallBreakdownRow[] {
-  const sales = filterSales(query);
+export function getMallBreakdown(
+  query: BaseQuery & { manufacturer?: string },
+): MallBreakdownRow[] {
+  const manufacturer = query.manufacturer?.trim() || "";
+  let sales = filterSales(query);
+  if (manufacturer) {
+    const productsById = new Map(loadProducts().map((p) => [p.id, p]));
+    sales = sales.filter((s) => {
+      const p = productsById.get(s.productId);
+      return (p?.manufacturer ?? "").trim() === manufacturer;
+    });
+  }
   const total = sales.reduce((acc, s) => acc + s.grossAmount, 0);
 
   const rows = MALLS.map((m) => {
@@ -191,11 +201,12 @@ export function getMallBreakdown(query: BaseQuery): MallBreakdownRow[] {
 }
 
 export function getTopProducts(
-  query: BaseQuery & { limit?: number; categoryPrefix?: string; mallId?: string },
+  query: BaseQuery & { limit?: number; categoryPrefix?: string; mallId?: string; manufacturer?: string },
 ): ProductRankRow[] {
   const limit = query.limit ?? 10;
   const prefix = query.categoryPrefix?.trim() || "";
   const mallId = query.mallId?.trim() || "";
+  const manufacturer = query.manufacturer?.trim() || "";
   const productsById = new Map(loadProducts().map((p) => [p.id, p]));
 
   const rank = (q: BaseQuery) => {
@@ -203,9 +214,12 @@ export function getTopProducts(
     const map = new Map<string, { gross: number; qty: number; commission: number }>();
     for (const s of sales) {
       if (mallId && s.mallId !== mallId) continue;
+      const product = productsById.get(s.productId);
       if (prefix) {
-        const product = productsById.get(s.productId);
         if (!product || !product.categoryCode.startsWith(prefix)) continue;
+      }
+      if (manufacturer) {
+        if (!product || (product.manufacturer ?? "").trim() !== manufacturer) continue;
       }
       const acc = map.get(s.productId) ?? { gross: 0, qty: 0, commission: 0 };
       acc.gross += s.grossAmount;

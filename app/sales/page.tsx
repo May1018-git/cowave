@@ -78,13 +78,13 @@ export default function SalesPage({ searchParams }: SalesPageProps) {
       </div>
 
       <div className="card p-5">
-        <h3 className="mb-3 text-sm font-semibold">소분류 카테고리별 매출</h3>
-        <CategoryStackChart rows={categoryRows} />
+        <h3 className="mb-3 text-sm font-semibold">소분류 카테고리 상세</h3>
+        <SubCategoryTable rows={categoryRows} />
       </div>
 
       <div className="card p-5">
-        <h3 className="mb-3 text-sm font-semibold">소분류 카테고리 상세</h3>
-        <SubCategoryTable rows={categoryRows} />
+        <h3 className="mb-3 text-sm font-semibold">소분류 카테고리별 매출</h3>
+        <CategoryStackChart rows={categoryRows} />
       </div>
     </div>
   );
@@ -108,28 +108,51 @@ function ComparisonCard({
   const negative = (pct ?? 0) < -0.05;
   const Icon = positive ? ArrowUpRight : negative ? ArrowDownRight : Minus;
 
+  if (variant === "neutral") {
+    return (
+      <div className="card p-4">
+        <div className="text-xs font-medium text-gray-500">{label}</div>
+        <div className="mt-1 text-2xl font-semibold tracking-tight">
+          {formatKRW(current, { compact: true })}
+        </div>
+      </div>
+    );
+  }
+
+  const delta = previous !== null ? current - previous : null;
+  const deltaStr =
+    delta !== null
+      ? delta >= 0
+        ? `+${formatKRW(delta, { compact: true })}`
+        : formatKRW(delta, { compact: true })
+      : null;
+
   return (
     <div className="card p-4">
       <div className="text-xs font-medium text-gray-500">{label}</div>
-      <div className="mt-1 text-2xl font-semibold tracking-tight">
-        {formatKRW(current, { compact: true })}
+      <div
+        className={cn(
+          "mt-1 flex items-center gap-1 text-2xl font-semibold tracking-tight",
+          positive && "text-emerald-600",
+          negative && "text-red-600",
+          !positive && !negative && "text-gray-500",
+        )}
+      >
+        <Icon size={20} />
+        {formatPercent(pct)}
       </div>
-      {variant !== "neutral" && (
-        <div className="mt-2 flex items-center gap-2 text-xs">
-          <span className="text-gray-500">
-            비교기 {previous !== null ? formatKRW(previous, { compact: true }) : "—"}
-          </span>
-          {growth && (
+      {previous !== null && (
+        <div className="mt-1.5 text-xs text-gray-500">
+          비교기 {formatKRW(previous, { compact: true })}
+          {deltaStr && (
             <span
               className={cn(
-                "inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 font-medium",
-                positive && "bg-emerald-50 text-emerald-700",
-                negative && "bg-red-50 text-red-700",
-                !positive && !negative && "bg-gray-100 text-gray-600",
+                "ml-1",
+                positive && "text-emerald-600",
+                negative && "text-red-600",
               )}
             >
-              <Icon size={11} />
-              {formatPercent(growth.percent)}
+              ({deltaStr})
             </span>
           )}
         </div>
