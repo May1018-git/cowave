@@ -2,12 +2,21 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { SITES } from "@/lib/sites";
 import type { SiteFilter } from "@/lib/types";
+
+const SITE_COLOR_CLASS: Record<string, string> = {
+  enuri: "bg-brand-enuri",
+  danawa: "bg-brand-danawa",
+};
 
 const OPTIONS: { value: SiteFilter; label: string; color: string }[] = [
   { value: "all", label: "전체", color: "bg-gray-900" },
-  { value: "enuri", label: "에누리", color: "bg-brand-enuri" },
-  { value: "danawa", label: "다나와", color: "bg-brand-danawa" },
+  ...SITES.map((s) => ({
+    value: s.id as SiteFilter,
+    label: s.name,
+    color: SITE_COLOR_CLASS[s.id] ?? "bg-gray-500",
+  })),
 ];
 
 export function SiteToggle() {
@@ -15,6 +24,8 @@ export function SiteToggle() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const current = (searchParams.get("site") as SiteFilter) ?? "all";
+
+  if (SITES.length <= 1) return null;
 
   function setSite(value: SiteFilter) {
     const params = new URLSearchParams(searchParams.toString());

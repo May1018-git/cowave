@@ -23,11 +23,12 @@ export default function ProductsPage({ searchParams }: ProductsPageProps) {
   const categoryPrefix =
     searchParams.cat3 ?? searchParams.cat2 ?? searchParams.cat1 ?? "";
 
-  let rows = getTopProducts({ siteFilter, ...range, limit: 50 });
-  if (categoryPrefix) {
-    rows = rows.filter((r) => r.product.categoryCode.startsWith(categoryPrefix));
-  }
-  rows = rows.slice(0, 20).map((r, i) => ({ ...r, rank: i + 1 }));
+  const rows = getTopProducts({
+    siteFilter,
+    ...range,
+    limit: 20,
+    categoryPrefix: categoryPrefix || undefined,
+  });
 
   return (
     <div className="space-y-6">

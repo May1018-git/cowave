@@ -12,11 +12,11 @@ import {
 import { formatKRW } from "@/lib/utils";
 
 interface CategoryStackChartProps {
-  rows: { topCode: string; topName: string; grossAmount: number }[];
+  rows: { code: string; name: string; grossAmount: number }[];
 }
 
 export function CategoryStackChart({ rows }: CategoryStackChartProps) {
-  const data = rows.map((r) => ({ name: r.topName, value: r.grossAmount }));
+  const data = rows.map((r) => ({ name: r.name, value: r.grossAmount }));
 
   return (
     <div className="h-72 w-full">

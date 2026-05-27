@@ -66,6 +66,14 @@ export function getTopCategory(code: string): CategoryNode | undefined {
   return cur;
 }
 
+export function getSubCategory(code: string): CategoryNode | undefined {
+  let cur = resolveCode(code);
+  while (cur && cur.depth > 3) {
+    cur = cur.parentCode ? CATEGORY_BY_CODE.get(cur.parentCode) : undefined;
+  }
+  return cur && cur.depth === 3 ? cur : undefined;
+}
+
 export function getChildren(parentCode: string | null): CategoryNode[] {
   return CATEGORIES.filter((c) => c.parentCode === parentCode);
 }

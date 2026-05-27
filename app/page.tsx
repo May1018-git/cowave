@@ -41,23 +41,23 @@ export default function Home({ searchParams }: HomeProps) {
     })),
   }));
   const mallBreakdown = getMallBreakdown({ siteFilter, ...range });
-  const topProducts = getTopProducts({ siteFilter, ...range, limit: 5 });
+  const topProducts = getTopProducts({ siteFilter, ...range, limit: 20 });
 
-  const perSiteSub =
-    siteFilter === "all" ? (
-      <span className="space-x-2">
-        {SITES.map((s) => (
-          <span key={s.id}>
-            <span
-              className="mr-0.5 inline-block h-1.5 w-1.5 rounded-full align-middle"
-              style={{ background: s.color }}
-            />
-            {s.name.slice(0, 1)}{" "}
-            {formatKRW(kpi.perSite[s.id].grossAmount, { compact: true })}
-          </span>
-        ))}
-      </span>
-    ) : null;
+  const showSiteBreakdown = siteFilter === "all" && SITES.length > 1;
+  const perSiteSub = showSiteBreakdown ? (
+    <span className="space-x-2">
+      {SITES.map((s) => (
+        <span key={s.id}>
+          <span
+            className="mr-0.5 inline-block h-1.5 w-1.5 rounded-full align-middle"
+            style={{ background: s.color }}
+          />
+          {s.name.slice(0, 1)}{" "}
+          {formatKRW(kpi.perSite[s.id].grossAmount, { compact: true })}
+        </span>
+      ))}
+    </span>
+  ) : null;
 
   return (
     <div className="space-y-6">
@@ -81,8 +81,8 @@ export default function Home({ searchParams }: HomeProps) {
           label="주문 건수"
           value={formatNumber(kpi.orders)}
           subValue={
-            siteFilter === "all"
-              ? `에 ${formatNumber(kpi.perSite.enuri.orders)} · 다 ${formatNumber(kpi.perSite.danawa.orders)}`
+            showSiteBreakdown
+              ? SITES.map((s) => `${s.name.slice(0, 1)} ${formatNumber(kpi.perSite[s.id].orders)}`).join(" · ")
               : null
           }
         />
@@ -120,7 +120,7 @@ export default function Home({ searchParams }: HomeProps) {
 
       <div className="card p-5">
         <h3 className="mb-3 text-sm font-semibold">
-          TOP 5 인기 상품 {usingCustomRange ? "" : "(이번 달)"}
+          TOP 20 인기 상품 {usingCustomRange ? "" : "(이번 달)"}
         </h3>
         <TopProductsTable rows={topProducts} />
       </div>

@@ -5,7 +5,6 @@ import { loadXlsxFile } from "./xlsx";
 
 const SITE_FOLDERS: Array<{ id: SiteId; folder: string }> = [
   { id: "enuri", folder: "에누리" },
-  { id: "danawa", folder: "다나와" },
 ];
 
 export interface FileSystemLoadResult {

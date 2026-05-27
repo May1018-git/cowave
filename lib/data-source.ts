@@ -11,7 +11,7 @@ import { loadDataDirCached } from "./loaders/file-system";
 import { MALLS } from "./mall-map";
 import { SITES } from "./sites";
 import { computeGrowth, previousPeriodMoM, previousPeriodYoY } from "./growth";
-import { getTopCategory } from "./category-map";
+import { getSubCategory, getTopCategory } from "./category-map";
 import type {
   GrowthMetric,
   MallBreakdownRow,
@@ -139,6 +139,8 @@ export function getKpis(query: BaseQuery): KpiSummary {
     enuri: { grossAmount: 0, orders: 0 },
     danawa: { grossAmount: 0, orders: 0 },
   };
+  // 다나와는 한시적으로 데이터 수집 중단 — UI 에서는 SITES 기반으로 자동 숨김.
+  // perSite 키는 타입 호환 위해 남겨두고 값은 항상 0.
   for (const s of sales) {
     perSite[s.siteId].grossAmount += s.grossAmount;
     perSite[s.siteId].orders += 1;
@@ -189,15 +191,20 @@ export function getMallBreakdown(query: BaseQuery): MallBreakdownRow[] {
 }
 
 export function getTopProducts(
-  query: BaseQuery & { limit?: number },
+  query: BaseQuery & { limit?: number; categoryPrefix?: string },
 ): ProductRankRow[] {
   const limit = query.limit ?? 10;
+  const prefix = query.categoryPrefix?.trim() || "";
   const productsById = new Map(loadProducts().map((p) => [p.id, p]));
 
   const rank = (q: BaseQuery) => {
     const sales = filterSales(q);
     const map = new Map<string, { gross: number; qty: number; commission: number }>();
     for (const s of sales) {
+      if (prefix) {
+        const product = productsById.get(s.productId);
+        if (!product || !product.categoryCode.startsWith(prefix)) continue;
+      }
       const acc = map.get(s.productId) ?? { gross: 0, qty: 0, commission: 0 };
       acc.gross += s.grossAmount;
       acc.qty += s.quantity;
@@ -260,6 +267,29 @@ export function getCategoryBreakdown(query: BaseQuery): {
       topName: name,
       grossAmount: gross,
     }))
+    .sort((a, b) => b.grossAmount - a.grossAmount);
+}
+
+export function getSubCategoryBreakdown(query: BaseQuery): {
+  code: string;
+  name: string;
+  grossAmount: number;
+}[] {
+  const sales = filterSales(query);
+  const productsById = new Map(loadProducts().map((p) => [p.id, p]));
+  const map = new Map<string, { name: string; gross: number }>();
+  const OTHER_KEY = "__other__";
+  for (const s of sales) {
+    const product = productsById.get(s.productId);
+    const sub = product ? getSubCategory(product.categoryCode) : undefined;
+    const key = sub?.code ?? OTHER_KEY;
+    const name = sub?.name ?? "기타";
+    const acc = map.get(key) ?? { name, gross: 0 };
+    acc.gross += s.grossAmount;
+    map.set(key, acc);
+  }
+  return [...map.entries()]
+    .map(([code, { name, gross }]) => ({ code, name, grossAmount: gross }))
     .sort((a, b) => b.grossAmount - a.grossAmount);
 }
 

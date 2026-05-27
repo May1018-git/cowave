@@ -3,9 +3,9 @@ import { PeriodToggle } from "@/components/sales/PeriodToggle";
 import { CategoryStackChart } from "@/components/sales/CategoryStackChart";
 import { SalesTrendChart } from "@/components/dashboard/SalesTrendChart";
 import {
-  getCategoryBreakdown,
   getKpis,
   getSeries,
+  getSubCategoryBreakdown,
   resolveRange,
 } from "@/lib/data-source";
 import {
@@ -59,7 +59,7 @@ export default function SalesPage({ searchParams }: SalesPageProps) {
   const yoyGrowth = computeGrowth(current.grossAmount, yoy.grossAmount);
   const momGrowth = computeGrowth(current.grossAmount, mom.grossAmount);
 
-  const categoryRows = getCategoryBreakdown({ siteFilter, ...range });
+  const categoryRows = getSubCategoryBreakdown({ siteFilter, ...range });
 
   return (
     <div className="space-y-6">
@@ -105,7 +105,7 @@ export default function SalesPage({ searchParams }: SalesPageProps) {
       </div>
 
       <div className="card p-5">
-        <h3 className="mb-3 text-sm font-semibold">대분류 카테고리별 매출</h3>
+        <h3 className="mb-3 text-sm font-semibold">소분류 카테고리별 매출</h3>
         <CategoryStackChart rows={categoryRows} />
       </div>
     </div>
