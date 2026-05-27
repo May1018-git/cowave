@@ -149,6 +149,19 @@ function normalizeDate(
     // YYYYMMDD 8자리 통째
     const m8 = cleaned.match(/^(\d{4})(\d{2})(\d{2})$/);
     if (m8) return `${m8[1]}-${m8[2]}-${m8[3]}`;
+    // M/D/YY · M/D/YYYY · D/M/YY · D/M/YYYY (구분자: / 또는 -)
+    // Excel 미국식 단축 날짜
+    const mShort = cleaned.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{2}|\d{4})$/);
+    if (mShort) {
+      let mo = Number(mShort[1]);
+      let d = Number(mShort[2]);
+      let y = Number(mShort[3]);
+      if (y < 100) y += y < 70 ? 2000 : 1900;
+      if (mo > 12 && d <= 12) [mo, d] = [d, mo];
+      if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31 && y >= 2000 && y <= 2100) {
+        return `${y}-${pad2(mo)}-${pad2(d)}`;
+      }
+    }
     // YYYY[separator]MM[separator]DD — 어떤 구분자든 OK
     const m = cleaned.match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
     if (m) {
