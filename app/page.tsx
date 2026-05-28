@@ -4,6 +4,7 @@ import { MallShareChart } from "@/components/dashboard/MallShareChart";
 import { TopProductsTable } from "@/components/dashboard/TopProductsTable";
 import { SITES } from "@/lib/sites";
 import {
+  getAchievement,
   getDataLast30Range,
   getKpiGrowth,
   getKpis,
@@ -38,6 +39,7 @@ export default function Home({ searchParams }: HomeProps) {
 
   const kpi = getKpis({ siteFilter, ...range, categoryPrefix });
   const growth = getKpiGrowth({ siteFilter, ...range, categoryPrefix });
+  const achievement = getAchievement({ siteFilter, ...range, categoryPrefix });
   const series = getSeries({
     siteFilter,
     ...trendRange,
@@ -94,7 +96,24 @@ export default function Home({ searchParams }: HomeProps) {
         <KpiCard
           label={usingCustomRange ? "선택 기간 매출" : "이번 달 총매출"}
           value={formatKRW(kpi.grossAmount, { compact: true })}
-          subValue={perSiteSub}
+          subValue={
+            achievement ? (
+              <span>
+                월목표 {formatKRW(achievement.target, { compact: true })} · 달성{" "}
+                <span
+                  className={
+                    achievement.rate >= 1
+                      ? "font-medium text-emerald-600"
+                      : "font-medium text-gray-700"
+                  }
+                >
+                  {(achievement.rate * 100).toFixed(0)}%
+                </span>
+              </span>
+            ) : (
+              perSiteSub
+            )
+          }
           yoy={growth.yoy}
           mom={growth.mom}
         />

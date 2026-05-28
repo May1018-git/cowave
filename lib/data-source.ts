@@ -8,6 +8,7 @@ import {
 } from "date-fns";
 import { getMockProducts, getMockSales } from "./mock-data";
 import { loadDataDirCached } from "./loaders/file-system";
+import { loadTargetsCached } from "./loaders/target";
 import { MALLS } from "./mall-map";
 import { SITES } from "./sites";
 import { computeGrowth, previousPeriodMoM, previousPeriodYoY } from "./growth";
@@ -221,6 +222,75 @@ export function getKpiGrowth(query: BaseQuery): {
     yoy: computeGrowth(current, yoyPrev),
     mom: computeGrowth(current, momPrev),
   };
+}
+
+/** [from, to] 가 걸치는 (연, 월) 목록. 월 단위 목표 합산에 사용. */
+function monthsInRange(from: string, to: string): { year: number; month: number }[] {
+  const f = parseISO(from);
+  const t = parseISO(to);
+  const out: { year: number; month: number }[] = [];
+  let y = f.getFullYear();
+  let m = f.getMonth(); // 0-based
+  const endY = t.getFullYear();
+  const endM = t.getMonth();
+  while (y < endY || (y === endY && m <= endM)) {
+    out.push({ year: y, month: m + 1 });
+    m += 1;
+    if (m > 11) {
+      m = 0;
+      y += 1;
+    }
+  }
+  return out;
+}
+
+export interface Achievement {
+  /** 기간에 해당하는 월 목표 합계(원). */
+  target: number;
+  /** 기간 실적 매출(원). */
+  actual: number;
+  /** actual / target. 1 = 100% 달성. */
+  rate: number;
+}
+
+/**
+ * 월 목표 대비 달성율.
+ *   - 목표 파일이 없거나 해당 카테고리 목표가 없으면 null.
+ *   - categoryPrefix 가 소분류(4자리 초과)면 목표 단위가 없어 null.
+ *   - categoryPrefix 미지정(전체)이면 데이터에 존재하는 중분류 목표 합산.
+ */
+export function getAchievement(query: BaseQuery): Achievement | null {
+  const dataDir = process.env.DATA_DIR?.trim();
+  if (!dataDir) return null;
+  const table = loadTargetsCached(dataDir);
+  const site = query.siteFilter === "danawa" ? "danawa" : "enuri";
+  const byName = table[site];
+  if (!byName || Object.keys(byName).length === 0) return null;
+
+  const prefix = query.categoryPrefix?.trim() || "";
+  let names: string[];
+  if (prefix) {
+    if (prefix.length > 4) return null; // 소분류는 목표 입력 단위가 아님
+    const mid = getMidCategory(prefix);
+    names = mid && byName[mid.name] ? [mid.name] : [];
+  } else {
+    names = getAvailableMidCategories()
+      .map((c) => c.name)
+      .filter((n) => byName[n]);
+  }
+  if (names.length === 0) return null;
+
+  const months = monthsInRange(query.from, query.to);
+  let target = 0;
+  for (const name of names) {
+    const arr = byName[name];
+    if (!arr) continue;
+    for (const { month } of months) target += arr[month - 1] ?? 0;
+  }
+  if (target <= 0) return null;
+
+  const actual = getKpis(query).grossAmount;
+  return { target, actual, rate: actual / target };
 }
 
 export function getMallBreakdown(

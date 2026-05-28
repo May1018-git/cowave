@@ -36,6 +36,8 @@ export function loadDataDir(dataDir: string): FileSystemLoadResult {
     const entries = readdirSync(dir);
     for (const entry of entries) {
       if (!/\.xlsx?$/i.test(entry)) continue;
+      // GMV 원천 파일만 매출로 적재. 목표(타겟) 등 보조 파일은 건너뜀.
+      if (!/GMV_RAWDATA/i.test(entry)) continue;
       const fullPath = join(dir, entry);
       try {
         const buf = readFileSync(fullPath);

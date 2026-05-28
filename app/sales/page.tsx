@@ -2,6 +2,7 @@ import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { CategoryStackChart } from "@/components/sales/CategoryStackChart";
 import { SubCategoryTable } from "@/components/sales/SubCategoryTable";
 import {
+  getAchievement,
   getKpis,
   getSubCategoryBreakdown,
   resolveCategoryPrefix,
@@ -66,6 +67,8 @@ export default function SalesPage({ searchParams }: SalesPageProps) {
     categoryPrefix,
   });
 
+  const achievement = getAchievement({ siteFilter, ...range, categoryPrefix });
+
   return (
     <div className="space-y-6">
       <div>
@@ -75,13 +78,26 @@ export default function SalesPage({ searchParams }: SalesPageProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div
+        className={cn(
+          "grid grid-cols-1 gap-4 md:grid-cols-2",
+          achievement ? "lg:grid-cols-4" : "lg:grid-cols-3",
+        )}
+      >
         <ComparisonCard
           label="당기 매출"
           current={current.grossAmount}
           previous={null}
           variant="neutral"
         />
+        {achievement && (
+          <AchievementCard
+            label="월 목표 달성율"
+            rate={achievement.rate}
+            target={achievement.target}
+            actual={achievement.actual}
+          />
+        )}
         <ComparisonCard
           label="전년 동기 대비 (YoY)"
           current={current.grossAmount}
@@ -178,6 +194,52 @@ function ComparisonCard({
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function AchievementCard({
+  label,
+  rate,
+  target,
+  actual,
+}: {
+  label: string;
+  rate: number;
+  target: number;
+  actual: number;
+}) {
+  const pct = rate * 100;
+  const textColor =
+    pct >= 100
+      ? "text-emerald-600"
+      : pct >= 80
+        ? "text-gray-700"
+        : "text-amber-600";
+  const barColor =
+    pct >= 100 ? "bg-emerald-500" : pct >= 80 ? "bg-blue-500" : "bg-amber-500";
+
+  return (
+    <div className="card p-4">
+      <div className="text-xs font-medium text-gray-500">{label}</div>
+      <div
+        className={cn(
+          "mt-1 text-2xl font-semibold tracking-tight",
+          textColor,
+        )}
+      >
+        {pct.toFixed(1)}%
+      </div>
+      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+        <div
+          className={cn("h-full rounded-full", barColor)}
+          style={{ width: `${Math.min(100, Math.max(0, pct))}%` }}
+        />
+      </div>
+      <div className="mt-1.5 text-xs text-gray-500">
+        목표 {formatKRW(target, { compact: true })} · 실적{" "}
+        {formatKRW(actual, { compact: true })}
+      </div>
     </div>
   );
 }
