@@ -1,0 +1,1697 @@
+
+
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=euc-kr">
+<head>
+<title>GMV Raw Data</title>
+<style>
+	body {font-family:맑은 고딕;margin:30}
+	body, table, td, li {font-size:9pt;COLOR: #000000;}
+	th {font-size:9pt;background-color:#eaeaea;height:25;padding:2;}
+	table.rowset	{border-collapse:collapse;}
+	table.rowset td {padding:2 3 2 2;}
+	table.rowset thead {height:30;font-weight:bold;font-size:14;}
+	table.rowset caption {padding:10;text-align:center;font-weight:bold;font-size:14;}
+
+	ol			{margin:5 25;}
+	ul			{margin:5 1;}
+
+	.ff_vdn		{font-family: arial}
+	.ff_tah		{font-family: tahoma}
+	.ff_ari		{font-family: arial}
+	.fs_8		{font-size:8pt}
+	.fs_9		{font-size:9pt}
+	.fs_10		{font-size:10pt}
+	.fs_11		{font-size:11pt}
+	.fw_b		{font-weight:bold}
+	.c_b		{color:black}
+	.c_s		{color:#afafaf}
+	.c_sb		{color:darkgray}
+	.c_bl		{color:blue}
+	.ta_c		{text-align:center;}
+	.ta_l		{text-align:left;}
+	.ta_r		{text-align:right;}
+	.bc_g		{background-color:#efefef}
+	.bc_1		{background-color:#FFE6E6}
+	.bc_0		{background-color:#FFE6E6}
+	.bc_sk		{background-color:#EDE6DE}
+	.bd_l		{border-left:2px solid black}
+
+
+	br { mso-data-placement:same-cell; }
+	td.txt {mso-number-format:\@}
+	td.dt {mso-number-format:yyyy-mm-dd hh:mm:ss}
+	td.num {mso-number-format:\#\,\#\#}
+</style>
+
+
+</head>
+<BODY>
+
+<center>
+
+
+    <table class="rowset" border="1" style="border-collapse:collapse;" cellpadding=0 cellspacing=0 bordercolor="#979797">
+
+    	
+    	    <tr>
+    	        <th>no</th>
+    	        <th>체결일</th>
+    	        <th>디바이스</th>
+    	        <th>쇼핑몰</th>
+    	        <th>상품코드</th>
+    	        <th>카테고리</th>
+    	        <th>쇼핑몰 상품명</th>
+    	        <th>에누리 모델번호</th>
+    	        <th>상품명</th>
+    	        <th>제조사</th>
+    	        <th>주문수량</th>
+    	        <th>주문액</th>
+    	    </tr>
+    	    
+        		<tr>
+        		    <td class="num">1</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">49</td>
+        		    <td class="txt">LO2578029227</td>
+        		    <td class="txt">1504</td>
+        		    <td class="txt">랍스터-테일-4.54kg-37~42마리-내외-(4oz)-냉동-랍스타-꼬리-바닷가재-꼬리-업소용</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">324260</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">2</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4236393441</td>
+        		    <td class="txt">15040309</td>
+        		    <td class="txt">완도맘햇곱창김-100매-곱창돌김-생김-특상품</td>
+        		    <td class="txt">122457749</td>
+        		    <td class="txt">햇 지주식 곱창김 100매 400g내외[1개]</td>
+        		    <td class="txt">완도맘</td>
+        		    <td class="num">5</td>
+        		    <td class="num">120600</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">3</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">49</td>
+        		    <td class="txt">LO1857564311</td>
+        		    <td class="txt">15040306</td>
+        		    <td class="txt">[광천김]-올리브-녹차-재래-전장김-25g-10봉</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">5</td>
+        		    <td class="num">77396</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">4</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">5910</td>
+        		    <td class="txt">2191312330</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">해맑은푸드-한치-M(30미내외)-1kg</td>
+        		    <td class="txt">33857208</td>
+        		    <td class="txt">한치 M 1kg[30개]</td>
+        		    <td class="txt">해맑은푸드</td>
+        		    <td class="num">1</td>
+        		    <td class="num">75230</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">5</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">C602065640</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">MD-영동산골오징어-마른오징어-1kg</td>
+        		    <td class="txt">79548556</td>
+        		    <td class="txt">영동산골 건오징어 1kg[1개]</td>
+        		    <td class="txt">영동산골오징어</td>
+        		    <td class="num">1</td>
+        		    <td class="num">74870</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">6</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4646239847</td>
+        		    <td class="txt">15040914</td>
+        		    <td class="txt">2025-김정배명인새우젓(육젓)500g4통</td>
+        		    <td class="txt">139051341</td>
+        		    <td class="txt">김정배명인새우젓 육젓 500g[4개]</td>
+        		    <td class="txt">굴다리식품</td>
+        		    <td class="num">1</td>
+        		    <td class="num">74780</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">7</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">75</td>
+        		    <td class="txt">1116330522</td>
+        		    <td class="txt">1504</td>
+        		    <td class="txt">L)인산가-백명란-120g-10팩</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">66410</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">8</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">75</td>
+        		    <td class="txt">1005446958</td>
+        		    <td class="txt">150401</td>
+        		    <td class="txt">은하수산-대광어-필렛-1.1kg</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">57880</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">9</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">5910</td>
+        		    <td class="txt">2191312365</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">해맑은푸드-한치-S(35미내외)-1kg</td>
+        		    <td class="txt">33857207</td>
+        		    <td class="txt">한치 S 1kg[35개]</td>
+        		    <td class="txt">해맑은푸드</td>
+        		    <td class="num">1</td>
+        		    <td class="num">73090</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">10</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">2422748763</td>
+        		    <td class="txt">15040301</td>
+        		    <td class="txt">장흥무산김-미니도시락김-20봉-유기인증-미니도시락김-조미김</td>
+        		    <td class="txt">97829187</td>
+        		    <td class="txt">유기 미니도시락김(올리브) 2g[20개]</td>
+        		    <td class="txt">장흥무산김</td>
+        		    <td class="num">10</td>
+        		    <td class="num">61800</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">11</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">3616741192</td>
+        		    <td class="txt">15040112</td>
+        		    <td class="txt">(전라도청년)국내산홍어-삭힌-안삭힌-생홍어-애(홍어애-회초장-증정)-1.5kg</td>
+        		    <td class="txt">121213716</td>
+        		    <td class="txt">국내산홍어 삭힌 안삭힌 생홍어 애 1.5kg</td>
+        		    <td class="txt">전라도청년</td>
+        		    <td class="num">1</td>
+        		    <td class="num">69850</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">12</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F439479310</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">어부예찬-국내산-촉촉오징어-왕특대-8미(2미X4봉)+오징어채-1봉(50g)</td>
+        		    <td class="txt">143530278</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 8미(2미X4봉)+오징어채 1봉(50gX1)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">66880</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">13</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F439479310</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">어부예찬-국내산-촉촉오징어-왕특대-8미(2미X4봉)+오징어채-1봉(50g)</td>
+        		    <td class="txt">143530278</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 8미(2미X4봉)+오징어채 1봉(50gX1)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">66880</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">14</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F439479310</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">어부예찬-국내산-촉촉오징어-왕특대-8미(2미X4봉)+오징어채-1봉(50g)</td>
+        		    <td class="txt">143530278</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 8미(2미X4봉)+오징어채 1봉(50gX1)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">66880</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">15</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F439479310</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">어부예찬-국내산-촉촉오징어-왕특대-8미(2미X4봉)+오징어채-1봉(50g)</td>
+        		    <td class="txt">143530278</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 8미(2미X4봉)+오징어채 1봉(50gX1)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">66880</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">16</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F439479310</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">어부예찬-국내산-촉촉오징어-왕특대-8미(2미X4봉)+오징어채-1봉(50g)</td>
+        		    <td class="txt">143530278</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 8미(2미X4봉)+오징어채 1봉(50gX1)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">66880</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">17</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F439479310</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">어부예찬-국내산-촉촉오징어-왕특대-8미(2미X4봉)+오징어채-1봉(50g)</td>
+        		    <td class="txt">143530278</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 8미(2미X4봉)+오징어채 1봉(50gX1)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">66880</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">18</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F439479310</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">어부예찬-국내산-촉촉오징어-왕특대-8미(2미X4봉)+오징어채-1봉(50g)</td>
+        		    <td class="txt">143530278</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 8미(2미X4봉)+오징어채 1봉(50gX1)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">66880</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">19</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F500919484</td>
+        		    <td class="txt">15040104</td>
+        		    <td class="txt">GS-가시제거연구소-고등어밥상-노르웨이-순살고등어-550g-3봉</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">52710</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">20</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">49</td>
+        		    <td class="txt">LO2656698188</td>
+        		    <td class="txt">15041404</td>
+        		    <td class="txt">깔끔-깐대하-500g</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">3</td>
+        		    <td class="num">51309.9999</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">21</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4647613754</td>
+        		    <td class="txt">150403</td>
+        		    <td class="txt">(현대홈쇼핑)청산에식품-두-번-구운-유기곱창김-200매</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">47360</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">22</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">5910</td>
+        		    <td class="txt">9277937801</td>
+        		    <td class="txt">1504</td>
+        		    <td class="txt">{백화점-상품}-아워홈-온더고-직장인-도시락-한식-양식-덮밥류-10팩세트(우삼겹-김치제육-함박-파스타-등)</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">47010</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">23</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4645008572</td>
+        		    <td class="txt">150409</td>
+        		    <td class="txt">(현대홈쇼핑)아라향-못난이-백명란-500g-5통</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">39460</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">24</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">5910</td>
+        		    <td class="txt">7991172659</td>
+        		    <td class="txt">15040114</td>
+        		    <td class="txt">자포니카-국내산-고창-대왕-민물장어-1kg-손질-후-700g</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">2</td>
+        		    <td class="num">57100</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">25</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4583977698</td>
+        		    <td class="txt">15040101</td>
+        		    <td class="txt">냉동-부세조기-3.4kg-6미/12미/15미/19미/26미</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">37400</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">26</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">1772677640</td>
+        		    <td class="txt">15040301</td>
+        		    <td class="txt">(주)해동-짱구식탁김-별나게-맛있는김-40gx20봉</td>
+        		    <td class="txt">11284527</td>
+        		    <td class="txt">짱구김 식탁용특대 40g[20개]</td>
+        		    <td class="txt">해동식품</td>
+        		    <td class="num">1</td>
+        		    <td class="num">37910</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">27</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">5910</td>
+        		    <td class="txt">3203196285</td>
+        		    <td class="txt">15041702</td>
+        		    <td class="txt">용대황태영농조합법인-용대리-황태포-10미-/-42-44cm.44-47cm</td>
+        		    <td class="txt">11631402</td>
+        		    <td class="txt">용대리 황태포 특왕 44~47cm[10개]</td>
+        		    <td class="txt">청정설악영농조합</td>
+        		    <td class="num">1</td>
+        		    <td class="num">40580</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">28</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">B383889885</td>
+        		    <td class="txt">15040302</td>
+        		    <td class="txt">청정원-남해안산-청정미역-200g-12봉</td>
+        		    <td class="txt">31562743</td>
+        		    <td class="txt">남해안산 청정미역 200g[12개]</td>
+        		    <td class="txt">대상</td>
+        		    <td class="num">1</td>
+        		    <td class="num">55140</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">29</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">3681857412</td>
+        		    <td class="txt">15040301</td>
+        		    <td class="txt">소문난삼부자-광천파래김(식탁김)-BOX-(4gx16봉)x10개</td>
+        		    <td class="txt">113638395</td>
+        		    <td class="txt">광천파래김 식탁김 16봉 4g[10개]</td>
+        		    <td class="txt">소문난삼부자</td>
+        		    <td class="num">1</td>
+        		    <td class="num">44950</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">30</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4243003219</td>
+        		    <td class="txt">15041001</td>
+        		    <td class="txt">(완도생협)특대-활전복-1kg-10-11미</td>
+        		    <td class="txt">131439074</td>
+        		    <td class="txt">완도직송 특대활전복10-11미 1kg 10-11미</td>
+        		    <td class="txt">우체국쇼핑</td>
+        		    <td class="num">2</td>
+        		    <td class="num">39600</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">31</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">49</td>
+        		    <td class="txt">LO2597757550</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">어부예찬-국내산-촉촉오징어-왕특대-4미(2미X2봉)+오징어채-1봉(50g)[35661161]</td>
+        		    <td class="txt">139989356</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 4미(2미X2봉)+오징어채 1봉(50g)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">40020</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">32</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">49</td>
+        		    <td class="txt">LO2597757550</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">어부예찬-국내산-촉촉오징어-왕특대-4미(2미X2봉)+오징어채-1봉(50g)[35661161]</td>
+        		    <td class="txt">139989356</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 4미(2미X2봉)+오징어채 1봉(50g)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">40020</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">33</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">49</td>
+        		    <td class="txt">LO2597757550</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">어부예찬-국내산-촉촉오징어-왕특대-4미(2미X2봉)+오징어채-1봉(50g)[35661161]</td>
+        		    <td class="txt">139989356</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 4미(2미X2봉)+오징어채 1봉(50g)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">40020</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">34</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F447741461</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">(NS홈쇼핑)어부예찬-국내산-촉촉오징어-왕특대-4미(2미X2봉)+오징어채-1봉(50g)..35661161</td>
+        		    <td class="txt">139989356</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 4미(2미X2봉)+오징어채 1봉(50g)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">39120</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">35</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F447741461</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">(NS홈쇼핑)어부예찬-국내산-촉촉오징어-왕특대-4미(2미X2봉)+오징어채-1봉(50g)..35661161</td>
+        		    <td class="txt">139989356</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 4미(2미X2봉)+오징어채 1봉(50g)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">39120</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">36</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F447741461</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">(NS홈쇼핑)어부예찬-국내산-촉촉오징어-왕특대-4미(2미X2봉)+오징어채-1봉(50g)..35661161</td>
+        		    <td class="txt">139989356</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 4미(2미X2봉)+오징어채 1봉(50g)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">39120</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">37</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F447741461</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">(NS홈쇼핑)어부예찬-국내산-촉촉오징어-왕특대-4미(2미X2봉)+오징어채-1봉(50g)..35661161</td>
+        		    <td class="txt">139989356</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 4미(2미X2봉)+오징어채 1봉(50g)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">39120</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">38</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F447741461</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">(NS홈쇼핑)어부예찬-국내산-촉촉오징어-왕특대-4미(2미X2봉)+오징어채-1봉(50g)..35661161</td>
+        		    <td class="txt">139989356</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 4미(2미X2봉)+오징어채 1봉(50g)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">39120</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">39</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F447741461</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">(NS홈쇼핑)어부예찬-국내산-촉촉오징어-왕특대-4미(2미X2봉)+오징어채-1봉(50g)..35661161</td>
+        		    <td class="txt">139989356</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 4미(2미X2봉)+오징어채 1봉(50g)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">39120</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">40</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F447741461</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">(NS홈쇼핑)어부예찬-국내산-촉촉오징어-왕특대-4미(2미X2봉)+오징어채-1봉(50g)..35661161</td>
+        		    <td class="txt">139989356</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 4미(2미X2봉)+오징어채 1봉(50g)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">39120</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">41</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4641612132</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">(NS홈쇼핑)어부예찬-국내산-촉촉오징어-왕특대-4미(2미X2봉)+오징어채-1봉(50g)..35661161</td>
+        		    <td class="txt">139989356</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 4미(2미X2봉)+오징어채 1봉(50g)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">39020</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">42</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4641612132</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">(NS홈쇼핑)어부예찬-국내산-촉촉오징어-왕특대-4미(2미X2봉)+오징어채-1봉(50g)..35661161</td>
+        		    <td class="txt">139989356</td>
+        		    <td class="txt">국내산 촉촉오징어 왕특대 4미(2미X2봉)+오징어채 1봉(50g)[1개]</td>
+        		    <td class="txt">어부예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">39020</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">43</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F418381754</td>
+        		    <td class="txt">150401</td>
+        		    <td class="txt">해가미-국내산-손질-특대-가자미-250g-x-12팩-(팩당-2마리)-/-총-24마리</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">37100</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">44</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4748855162</td>
+        		    <td class="txt">1504</td>
+        		    <td class="txt">CJ제일제당-비비고-순살-임연수구이-60g-x10개-(냉장)</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">35790</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">45</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">E927715951</td>
+        		    <td class="txt">150404</td>
+        		    <td class="txt">2+2-작은-구운-황조기-바삭한-굴비-125g-과메기-특품-진공포장-황금-어류-간식</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">34680</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">46</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4668569802</td>
+        		    <td class="txt">150403</td>
+        		    <td class="txt">광천별맛-파래-식탁김-총-36봉-(15g-x-12봉)-x-3박스</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">33750</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">47</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">5910</td>
+        		    <td class="txt">9281122929</td>
+        		    <td class="txt">1504</td>
+        		    <td class="txt">오리온-마켓오-오징어톡-구운오맛-80g-12봉-1박스과자-맥주안주-술안주-술안</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">25710</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">48</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">5910</td>
+        		    <td class="txt">9281122929</td>
+        		    <td class="txt">1504</td>
+        		    <td class="txt">오리온-마켓오-오징어톡-구운오맛-80g-12봉-1박스과자-맥주안주-술안주-술안</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">25710</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">49</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">5910</td>
+        		    <td class="txt">9281122929</td>
+        		    <td class="txt">1504</td>
+        		    <td class="txt">오리온-마켓오-오징어톡-구운오맛-80g-12봉-1박스과자-맥주안주-술안주-술안</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">25710</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">50</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4329332905</td>
+        		    <td class="txt">15041701</td>
+        		    <td class="txt">베트남-고가이리멸치-1.5kg-볶음-조림용-대용량-자멸-소멸-반찬-멸치-업소용</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">2</td>
+        		    <td class="num">25330</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">51</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F517082627</td>
+        		    <td class="txt">15040905</td>
+        		    <td class="txt">온정담-알찬백명란-총-1.5kg-(500gX3통)</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">29680</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">52</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">3153040443</td>
+        		    <td class="txt">15040806</td>
+        		    <td class="txt">멸치해물-다시팩-320gX3팩(총-60봉)</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">26920</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">53</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">6875</td>
+        		    <td class="txt">5210126253</td>
+        		    <td class="txt">15041702</td>
+        		    <td class="txt">두절-반건조-노가리-말랑-조미-반건명태-새끼-촉촉한-촉촉노가리-안주-업소용-건조-1Kg</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">21000</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">54</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">49</td>
+        		    <td class="txt">LO2465641801</td>
+        		    <td class="txt">15040905</td>
+        		    <td class="txt">삼양씨푸드-냉동-명란젓(분란)-1kg</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">20200</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">55</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4757586817</td>
+        		    <td class="txt">1504</td>
+        		    <td class="txt">반건조-오징어-특품-구룡포-피데기-10미-총-700g</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">19470</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">56</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">C620322822</td>
+        		    <td class="txt">15040110</td>
+        		    <td class="txt">순살대구-이유식생선-대구살-400gX3팩-대구-흰살생선-무염-식단재료-저열량생선</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">19460</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">57</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4752532282</td>
+        		    <td class="txt">15040114</td>
+        		    <td class="txt">(NS홈쇼핑)만복장어-국내산-자포니카-장어-민물장어-1kg-(손질-후-700g)+소스2종+생강채..35935574</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">19240</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">58</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4698423715</td>
+        		    <td class="txt">15040104</td>
+        		    <td class="txt">안동간고등어-140g-10팩-+-순살가자미-150g-2팩</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">18480</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">59</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4734072984</td>
+        		    <td class="txt">15041001</td>
+        		    <td class="txt">(신선집중)-완도-활전복-특대사이즈-1kg-9-10미</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">17920</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">60</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4734072984</td>
+        		    <td class="txt">15041001</td>
+        		    <td class="txt">(신선집중)-완도-활전복-특대사이즈-1kg-9-10미</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">17920</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">61</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4726351670</td>
+        		    <td class="txt">1504</td>
+        		    <td class="txt">대천항-봄-제철-자연산-광어회-슬라이스-350g</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">17910</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">62</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">C289313955</td>
+        		    <td class="txt">15040409</td>
+        		    <td class="txt">홍진미채-중가루-파지-일미-볶음-무침-진미-가루-1kg</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">17910</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">63</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4159668522</td>
+        		    <td class="txt">150409</td>
+        		    <td class="txt">저염-못난이-백명란-1kg-무염-무색소-속초명물-파치-파지</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">20610</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">64</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">2605549134</td>
+        		    <td class="txt">1504</td>
+        		    <td class="txt">(신선집중)-냉동-오징어-채-슬라이스-1kg+1kg</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">17430</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">65</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">49</td>
+        		    <td class="txt">LO2653757252</td>
+        		    <td class="txt">15041301</td>
+        		    <td class="txt">손질된-냉동-오징어링-1kg</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">2</td>
+        		    <td class="num">16260</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">66</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4747513247</td>
+        		    <td class="txt">15041301</td>
+        		    <td class="txt">국내산-갑오징어-1kg-단-하루-특가-2~4미-당일조업-무료배송</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">15540</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">67</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">3613486603</td>
+        		    <td class="txt">15040302</td>
+        		    <td class="txt">금복식품-비단실미역150g-임산부-산-산후-생일-맛있는-명품-옛날-초사리미역-건강의-섬-완도</td>
+        		    <td class="txt">1393467</td>
+        		    <td class="txt">옛날 미역 150g[1개]</td>
+        		    <td class="txt">오뚜기</td>
+        		    <td class="num">4</td>
+        		    <td class="num">21600</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">68</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F502969709</td>
+        		    <td class="txt">15040302</td>
+        		    <td class="txt">오뚜기-옛날-자른미역-80g</td>
+        		    <td class="txt">1900428</td>
+        		    <td class="txt">옛날 자른미역 80g[1개]</td>
+        		    <td class="txt">오뚜기</td>
+        		    <td class="num">7</td>
+        		    <td class="num">20370</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">69</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">E687886282</td>
+        		    <td class="txt">15040306</td>
+        		    <td class="txt">지도표성경-김-본사-재래-전장김-30g-x-10봉</td>
+        		    <td class="txt">10503461</td>
+        		    <td class="txt">재래김 30g[10개]</td>
+        		    <td class="txt">성경식품</td>
+        		    <td class="num">1</td>
+        		    <td class="num">14600</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">70</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4656887260</td>
+        		    <td class="txt">15040306</td>
+        		    <td class="txt">대천김-파래김-20g-15봉-조미김</td>
+        		    <td class="txt">16389633</td>
+        		    <td class="txt">파래김 20g[15개]</td>
+        		    <td class="txt">대천김</td>
+        		    <td class="num">1</td>
+        		    <td class="num">16210</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">71</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">B604069717</td>
+        		    <td class="txt">15040403</td>
+        		    <td class="txt">(천만흥행딜)(신선집중)-참쥐포-(대)-10장+10장+10장-(총-30장-1봉-2개-이상-구매시-사은품-폭탄혜택)</td>
+        		    <td class="txt">20031161</td>
+        		    <td class="txt">참쥐포 중[20개]</td>
+        		    <td class="txt">해담은건어물</td>
+        		    <td class="num">2</td>
+        		    <td class="num">19220</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">72</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">1610180550</td>
+        		    <td class="txt">15040301</td>
+        		    <td class="txt">소문난광천김-파래16단-도시락김-128봉-5gx16Px-8팩</td>
+        		    <td class="txt">26886856</td>
+        		    <td class="txt">소문난 파래 광천김 5g[128개]</td>
+        		    <td class="txt">광천김</td>
+        		    <td class="num">1</td>
+        		    <td class="num">30710</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">73</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">3601918617</td>
+        		    <td class="txt">15040309</td>
+        		    <td class="txt">G-성경김본사-참돌자반-70g-x-10봉</td>
+        		    <td class="txt">30958338</td>
+        		    <td class="txt">참돌자반 70g[10개]</td>
+        		    <td class="txt">성경식품</td>
+        		    <td class="num">1</td>
+        		    <td class="num">24480</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">74</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">3601918617</td>
+        		    <td class="txt">15040309</td>
+        		    <td class="txt">G-성경김본사-참돌자반-70g-x-10봉</td>
+        		    <td class="txt">30958338</td>
+        		    <td class="txt">참돌자반 70g[10개]</td>
+        		    <td class="txt">성경식품</td>
+        		    <td class="num">1</td>
+        		    <td class="num">24480</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">75</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F454105111</td>
+        		    <td class="txt">15040306</td>
+        		    <td class="txt">바다원-곱창재래돌김-100장</td>
+        		    <td class="txt">33859553</td>
+        		    <td class="txt">곱창돌김 100개입[1개]</td>
+        		    <td class="txt">바다원</td>
+        		    <td class="num">1</td>
+        		    <td class="num">15990</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">76</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4624924152</td>
+        		    <td class="txt">15040409</td>
+        		    <td class="txt">국내가공-백진미채-1kg-불만족시-100%-무료반품</td>
+        		    <td class="txt">36092351</td>
+        		    <td class="txt">백진미채 1kg[1개]</td>
+        		    <td class="txt">너트리</td>
+        		    <td class="num">1</td>
+        		    <td class="num">22020</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">77</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">B697777285</td>
+        		    <td class="txt">15040306</td>
+        		    <td class="txt">동원-양반-들기름-참기름-전장김-20g-x-20</td>
+        		    <td class="txt">40418151</td>
+        		    <td class="txt">양반 참기름김 20g[20개]</td>
+        		    <td class="txt">동원F&B</td>
+        		    <td class="num">1</td>
+        		    <td class="num">20930</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">78</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">B731524534</td>
+        		    <td class="txt">15041701</td>
+        		    <td class="txt">국내산-밥새우멸치-1.5Kg-/후리카케/주먹밥-무료택배</td>
+        		    <td class="txt">40424558</td>
+        		    <td class="txt">국내산 밥새우 멸치 1.5kg[1개]</td>
+        		    <td class="txt">백송식품</td>
+        		    <td class="num">1</td>
+        		    <td class="num">17010</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">79</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">1999578772</td>
+        		    <td class="txt">15041702</td>
+        		    <td class="txt">청정해-황태채-1kg-(원산지러시아-산)</td>
+        		    <td class="txt">62832550</td>
+        		    <td class="txt">황태채 1kg[1개]</td>
+        		    <td class="txt">청정해</td>
+        		    <td class="num">1</td>
+        		    <td class="num">35420</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">80</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">2490099338</td>
+        		    <td class="txt">15040322</td>
+        		    <td class="txt">대천김-혼합김-재래-10봉-+-파래-10봉</td>
+        		    <td class="txt">73331791</td>
+        		    <td class="txt">재래김+파래김 혼합 선물세트 400g[1개]</td>
+        		    <td class="txt">대천김</td>
+        		    <td class="num">1</td>
+        		    <td class="num">25900</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">81</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4658801904</td>
+        		    <td class="txt">15040104</td>
+        		    <td class="txt">(인정식탁)안동맛자반-순살-안동간고등어-필렛-100g-x-10팩</td>
+        		    <td class="txt">96917021</td>
+        		    <td class="txt">안동간고등어 순살 필렛 100g[10개]</td>
+        		    <td class="txt">안동맛자반</td>
+        		    <td class="num">1</td>
+        		    <td class="num">14700</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">82</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4689948940</td>
+        		    <td class="txt">15040114</td>
+        		    <td class="txt">대한민국농수산-국내산-자포니카-장어-민물장어-1kg-(손질-후-700g)세트</td>
+        		    <td class="txt">101573418</td>
+        		    <td class="txt">국내산 장어 민물장어 1kg 손질후 700g[1개]</td>
+        		    <td class="txt">대한민국농수산</td>
+        		    <td class="num">1</td>
+        		    <td class="num">20880</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">83</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4689948940</td>
+        		    <td class="txt">15040114</td>
+        		    <td class="txt">대한민국농수산-국내산-자포니카-장어-민물장어-1kg-(손질-후-700g)세트</td>
+        		    <td class="txt">101573418</td>
+        		    <td class="txt">국내산 장어 민물장어 1kg 손질후 700g[1개]</td>
+        		    <td class="txt">대한민국농수산</td>
+        		    <td class="num">1</td>
+        		    <td class="num">20880</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">84</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">3379266774</td>
+        		    <td class="txt">15040302</td>
+        		    <td class="txt">대천김-재래김-30봉-(30봉-x1세트)</td>
+        		    <td class="txt">102549207</td>
+        		    <td class="txt">재래김 30봉 30봉 x1세트</td>
+        		    <td class="txt">대천김</td>
+        		    <td class="num">1</td>
+        		    <td class="num">34930</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">85</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">2484123295</td>
+        		    <td class="txt">15041001</td>
+        		    <td class="txt">바다마을-완도전복-12-13미-1kg-1.-아이스박스포장</td>
+        		    <td class="txt">102553393</td>
+        		    <td class="txt">바다마을 완도전복 12-13미 1kg 1. 아이스박스포장</td>
+        		    <td class="txt">우체국쇼핑</td>
+        		    <td class="num">1</td>
+        		    <td class="num">17910</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">86</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">75</td>
+        		    <td class="txt">1000770321</td>
+        		    <td class="txt">15040300</td>
+        		    <td class="txt">명품-광천김-20g-x-20봉</td>
+        		    <td class="txt">104011506</td>
+        		    <td class="txt">명품 광천김 20g 20봉</td>
+        		    <td class="txt">바다마음</td>
+        		    <td class="num">1</td>
+        		    <td class="num">21990</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">87</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F506413422</td>
+        		    <td class="txt">15040306</td>
+        		    <td class="txt">G-현대수산맛김-보령-대천김-돌김-20g-x-22봉-전장김-구운김-조미김</td>
+        		    <td class="txt">122001893</td>
+        		    <td class="txt">보령 대천김 돌김 /조미김/전장김/구운김 20g[26봉]</td>
+        		    <td class="txt">현대수산맛김</td>
+        		    <td class="num">1</td>
+        		    <td class="num">32650</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">88</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">B811837702</td>
+        		    <td class="txt">15040301</td>
+        		    <td class="txt">(신선집중)-소문난오부자-재래-도시락김5g-54봉</td>
+        		    <td class="txt">128026384</td>
+        		    <td class="txt">소문난 오부자 도시락김 5g[54개]</td>
+        		    <td class="txt">소문난삼부자</td>
+        		    <td class="num">1</td>
+        		    <td class="num">18860</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">89</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4212137994</td>
+        		    <td class="txt">15041301</td>
+        		    <td class="txt">(더주)휴게소-철판구이-몸통-오징어-200g(7-14미)</td>
+        		    <td class="txt">129997763</td>
+        		    <td class="txt">한번 구워내 더 맛있는 휴게소 철판구이 맥반석 몸통오징어 250g 12-17미</td>
+        		    <td class="txt">더주</td>
+        		    <td class="num">2</td>
+        		    <td class="num">22080</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">90</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4340854296</td>
+        		    <td class="txt">15040104</td>
+        		    <td class="txt">안동-양반-순살간고등어-손질반마리-100g-15팩</td>
+        		    <td class="txt">130078363</td>
+        		    <td class="txt">순살간고등어 손질반마리 100g[15개]</td>
+        		    <td class="txt">안동양반간고등어</td>
+        		    <td class="num">1</td>
+        		    <td class="num">29940</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">91</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F558477560</td>
+        		    <td class="txt">15041006</td>
+        		    <td class="txt">당일조업-국내산-포항-백고동-살고동2kg</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">13980</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">92</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">C320160004</td>
+        		    <td class="txt">150403</td>
+        		    <td class="txt">(대천)신진수산맛김_재래김(5매x10봉)</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">13500</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">93</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">C320160004</td>
+        		    <td class="txt">150403</td>
+        		    <td class="txt">(대천)신진수산맛김_재래김(5매x10봉)</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">13500</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">94</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">C320160004</td>
+        		    <td class="txt">150403</td>
+        		    <td class="txt">(대천)신진수산맛김_재래김(5매x10봉)</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">13500</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">95</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">C320160004</td>
+        		    <td class="txt">150403</td>
+        		    <td class="txt">(대천)신진수산맛김_재래김(5매x10봉)</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">13500</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">96</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">C320160004</td>
+        		    <td class="txt">150403</td>
+        		    <td class="txt">(대천)신진수산맛김_재래김(5매x10봉)</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">13500</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">97</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">C320160004</td>
+        		    <td class="txt">150403</td>
+        		    <td class="txt">(대천)신진수산맛김_재래김(5매x10봉)</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">13500</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">98</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">C320160004</td>
+        		    <td class="txt">150403</td>
+        		    <td class="txt">(대천)신진수산맛김_재래김(5매x10봉)</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">13500</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">99</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4643996812</td>
+        		    <td class="txt">15041701</td>
+        		    <td class="txt">국산-햇-고주바멸치-1.5kg-남해-국물용-안주용-중멸치-다용도-한박스</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">12730</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">100</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">E220499349</td>
+        		    <td class="txt">1504</td>
+        		    <td class="txt">(신선집중)-강진-산지직송-자연산-보리숭어회-300g+4종소스-주문-즉시-손질</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">12310</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">101</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">49</td>
+        		    <td class="txt">LO2638105433</td>
+        		    <td class="txt">15041004</td>
+        		    <td class="txt">[이순신수산]-국내산-통영-제철-활멍게1kg--손질-깐-멍게-500g</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">10430</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">102</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F457952039</td>
+        		    <td class="txt">15040402</td>
+        		    <td class="txt">페스츄리-바베큐오징어-버터구이-150g+150g</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">10320</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">103</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">4027</td>
+        		    <td class="txt">F462842443</td>
+        		    <td class="txt">15040101</td>
+        		    <td class="txt">(NS홈쇼핑)국내산-참조기-1kg+1kg-총-2kg-(40-50미)35432573</td>
+        		    <td class="txt">0</td>
+        		    <td class="txt"></td>
+        		    <td class="txt"></td>
+        		    <td class="num">1</td>
+        		    <td class="num">5520</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">104</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">1856539350</td>
+        		    <td class="txt">15040905</td>
+        		    <td class="txt">프리미엄-백명란젓파치-500g-젓갈</td>
+        		    <td class="txt">78860463</td>
+        		    <td class="txt">프리미엄백명란젓파치 500g[1개]</td>
+        		    <td class="txt">찬예찬</td>
+        		    <td class="num">1</td>
+        		    <td class="num">9440</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">105</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">3559296895</td>
+        		    <td class="txt">15040300</td>
+        		    <td class="txt">C-WEED-예맛구운-곱창돌김-17g-10개</td>
+        		    <td class="txt">110739159</td>
+        		    <td class="txt">C-WEED 예맛 구운 곱창돌김 도시락김 17gx10</td>
+        		    <td class="txt">코스트코</td>
+        		    <td class="num">1</td>
+        		    <td class="num">12900</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">106</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">PC</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">3386007859</td>
+        		    <td class="txt">15040112</td>
+        		    <td class="txt">피쉬앤-냉장-막썰어-연어회-500g-샐러드용-횟감용</td>
+        		    <td class="txt">122457746</td>
+        		    <td class="txt">냉장 막썰어 연어회 500g[1개]</td>
+        		    <td class="txt">피쉬앤</td>
+        		    <td class="num">1</td>
+        		    <td class="num">13320</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">107</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4326620899</td>
+        		    <td class="txt">15041701</td>
+        		    <td class="txt">남해바다-햇-다시멸치-1.5kg-주바-멸치-대멸-국물용-육수용-업소용-박스-경매-햇멸치</td>
+        		    <td class="txt">132532372</td>
+        		    <td class="txt">햇 다시멸치 1.5kg 주바 멸치 대멸 국물용 육수용 업소용 박스</td>
+        		    <td class="txt">남해바다</td>
+        		    <td class="num">1</td>
+        		    <td class="num">12910</td>
+        		</tr>
+        		
+        		<tr>
+        		    <td class="num">108</td>
+        		    <td class="txt">2026-05-27</td>
+        		    <td class="txt">MOBILE</td>
+        		    <td class="txt">536</td>
+        		    <td class="txt">4326620899</td>
+        		    <td class="txt">15041701</td>
+        		    <td class="txt">남해바다-햇-다시멸치-1.5kg-주바-멸치-대멸-국물용-육수용-업소용-박스-경매-햇멸치</td>
+        		    <td class="txt">132532372</td>
+        		    <td class="txt">햇 다시멸치 1.5kg 주바 멸치 대멸 국물용 육수용 업소용 박스</td>
+        		    <td class="txt">남해바다</td>
+        		    <td class="num">1</td>
+        		    <td class="num">12910</td>
+        		</tr>
+        		
+    </table>
+
+
+
+</BODY>
+</HTML>
