@@ -66,6 +66,7 @@ function ProductCodeCell({
 export function TopProductsTable({ rows, compact }: TopProductsTableProps) {
   const colSpan = compact ? 5 : 7;
   return (
+    <div className="table-scroll">
     <table className="w-full text-sm">
       <thead>
         <tr className="border-b text-left text-xs text-gray-500">
@@ -133,5 +134,6 @@ export function TopProductsTable({ rows, compact }: TopProductsTableProps) {
         )}
       </tbody>
     </table>
+    </div>
   );
 }

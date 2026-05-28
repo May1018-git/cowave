@@ -30,6 +30,7 @@ function GrowthCell({ percent }: { percent: number | null }) {
 
 export function ManufacturerTable({ rows, qs }: ManufacturerTableProps) {
   return (
+    <div className="table-scroll">
     <table className="w-full text-sm">
       <thead>
         <tr className="border-b text-left text-xs text-gray-500">
@@ -86,5 +87,6 @@ export function ManufacturerTable({ rows, qs }: ManufacturerTableProps) {
         )}
       </tbody>
     </table>
+    </div>
   );
 }

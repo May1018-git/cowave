@@ -29,12 +29,11 @@ interface SalesPageProps {
 
 function defaultMonthRange() {
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const from = new Date(today);
-  from.setDate(from.getDate() - 29);
+  const from = new Date(today.getFullYear(), today.getMonth(), 1);
+  const to = new Date(today.getFullYear(), today.getMonth() + 1, 0);
   return {
     from: from.toISOString().slice(0, 10),
-    to: today.toISOString().slice(0, 10),
+    to: to.toISOString().slice(0, 10),
   };
 }
 

@@ -107,7 +107,7 @@ export default function MallsPage({ searchParams }: MallsPageProps) {
       </div>
 
       <div className="card p-5">
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-1">
           <h3 className="text-sm font-semibold">쇼핑몰별 매출</h3>
           <span className="text-[11px] text-gray-400">
             진한 막대: 당기 · 옅은 막대: 전년 동기
@@ -122,11 +122,12 @@ export default function MallsPage({ searchParams }: MallsPageProps) {
         />
       </div>
 
-      <div className="card overflow-auto p-5">
+      <div className="card p-5">
         <h3 className="mb-3 text-sm font-semibold">쇼핑몰 상세</h3>
         <p className="mb-2 text-[11px] text-gray-400">
           쇼핑몰 이름을 클릭하면 해당 몰의 상품별 매출을 볼 수 있어요.
         </p>
+        <div className="table-scroll">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b text-left text-xs text-gray-500">
@@ -179,10 +180,12 @@ export default function MallsPage({ searchParams }: MallsPageProps) {
             })}
           </tbody>
         </table>
+        </div>
       </div>
 
-      <div className="card overflow-auto p-5">
+      <div className="card p-5">
         <h3 className="mb-3 text-sm font-semibold">쇼핑몰 × 카테고리 매출</h3>
+        <div className="table-scroll">
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b text-left text-gray-500">
@@ -213,6 +216,7 @@ export default function MallsPage({ searchParams }: MallsPageProps) {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

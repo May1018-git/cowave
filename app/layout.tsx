@@ -25,7 +25,7 @@ export default function RootLayout({
             <Suspense fallback={<div className="h-14 border-b bg-white" />}>
               <Header />
             </Suspense>
-            <main className="flex-1 p-6">
+            <main className="flex-1 p-3 md:p-6">
               <Suspense fallback={<div>로딩 중...</div>}>{children}</Suspense>
             </main>
           </div>
