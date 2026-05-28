@@ -26,14 +26,15 @@ export function SalesTrendChart({ series, previousYear }: SalesTrendChartProps) 
   const allBuckets = [...buckets].sort();
 
   const data = allBuckets.map((bucket) => {
-    const row: Record<string, string | number> = { bucket };
+    const row: Record<string, string | number | null> = { bucket };
     for (const s of series) {
       const point = s.points.find((p) => p.bucket === bucket);
       row[s.siteId] = point?.grossAmount ?? 0;
     }
     for (const s of previousYear ?? []) {
       const point = s.points.find((p) => p.bucket === bucket);
-      row[`${s.siteId}_prev`] = point?.grossAmount ?? 0;
+      // 전년 데이터가 없는 날은 null → 라인을 0으로 끌어내리지 않고 끊는다.
+      row[`${s.siteId}_prev`] = point ? point.grossAmount : null;
     }
     return row;
   });

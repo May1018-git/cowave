@@ -46,18 +46,30 @@ export default function Home({ searchParams }: HomeProps) {
     categoryPrefix,
     period: "day",
   });
-  const prevSeries = getSeries({
+  const prevRaw = getSeries({
     siteFilter,
     ...previousPeriodYoY(trendRange),
     categoryPrefix,
     period: "day",
-  }).map((s) => ({
-    ...s,
-    points: s.points.map((p, idx) => ({
-      ...p,
-      bucket: series[0]?.points[idx]?.bucket ?? p.bucket,
-    })),
-  }));
+  });
+  // 전년 동기 라인은 날짜(연-1) 기준으로 당기 버킷에 맞춘다. 인덱스 정렬은
+  // 전년 구간에 결측일(예: 전년 동기 일부 월 데이터 없음)이 있으면 라인이
+  // 통째로 밀리고 끝부분이 0으로 끊긴다.
+  const curBySite = new Map(series.map((c) => [c.siteId, c.points]));
+  const prevSeries = prevRaw.map((s) => {
+    const byDate = new Map(s.points.map((p) => [p.bucket, p.grossAmount]));
+    const spine = curBySite.get(s.siteId) ?? series[0]?.points ?? [];
+    return {
+      siteId: s.siteId,
+      points: spine.flatMap((cur) => {
+        const yoyDate = `${Number(cur.bucket.slice(0, 4)) - 1}${cur.bucket.slice(4)}`;
+        const gross = byDate.get(yoyDate);
+        // 전년 해당일 데이터가 없으면 점을 만들지 않는다 (0 대신 라인 끊김).
+        if (gross === undefined) return [];
+        return [{ bucket: cur.bucket, grossAmount: gross, commission: 0, quantity: 0 }];
+      }),
+    };
+  });
   const mallBreakdown = getMallBreakdown({ siteFilter, ...range, categoryPrefix });
   const topProducts = getTopProducts({
     siteFilter,
