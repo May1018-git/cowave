@@ -269,6 +269,22 @@ export interface Achievement {
 }
 
 /**
+ * 중분류 이름으로 목표표의 키를 찾는다.
+ * 목표 파일 이름이 카테고리명과 약간 다를 수 있어(예: "건강식품" vs
+ * "건강식품/홍삼") 정확 일치 → 유일한 접두 일치 순으로 관대하게 매칭한다.
+ */
+function findTargetKey(
+  byName: Record<string, number[]>,
+  midName: string,
+): string | null {
+  if (byName[midName]) return midName;
+  const matches = Object.keys(byName).filter(
+    (k) => k.startsWith(`${midName}/`) || midName.startsWith(`${k}/`),
+  );
+  return matches.length === 1 ? matches[0] : null;
+}
+
+/**
  * 월 목표 대비 달성율.
  *   - 목표 파일이 없거나 해당 카테고리 목표가 없으면 null.
  *   - categoryPrefix 가 소분류(4자리 초과)면 목표 단위가 없어 null.
@@ -287,11 +303,15 @@ export function getAchievement(query: BaseQuery): Achievement | null {
   if (prefix) {
     if (prefix.length > 4) return null; // 소분류는 목표 입력 단위가 아님
     const mid = getMidCategory(prefix);
-    names = mid && byName[mid.name] ? [mid.name] : [];
+    const key = mid ? findTargetKey(byName, mid.name) : null;
+    names = key ? [key] : [];
   } else {
-    names = getAvailableMidCategories()
-      .map((c) => c.name)
-      .filter((n) => byName[n]);
+    const keys = new Set<string>();
+    for (const c of getAvailableMidCategories()) {
+      const key = findTargetKey(byName, c.name);
+      if (key) keys.add(key);
+    }
+    names = [...keys];
   }
   if (names.length === 0) return null;
 
