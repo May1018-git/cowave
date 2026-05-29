@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { CATEGORY_GROUPS } from "@/lib/category-map";
 import { cn } from "@/lib/utils";
 
 interface CategoryToggleProps {
@@ -13,7 +14,13 @@ export function CategoryToggle({ options }: CategoryToggleProps) {
   const searchParams = useSearchParams();
   const current = searchParams.get("cat") ?? "";
 
-  if (options.length <= 1) return null;
+  // 멤버 코드가 모두 데이터에 존재하는 그룹만 노출
+  const available = new Set(options.map((o) => o.code));
+  const groups = CATEGORY_GROUPS.filter((g) =>
+    g.codes.every((c) => available.has(c)),
+  ).map((g) => ({ value: g.codes.join(","), name: g.name }));
+
+  if (options.length <= 1 && groups.length === 0) return null;
 
   function setCat(value: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -41,6 +48,24 @@ export function CategoryToggle({ options }: CategoryToggleProps) {
       >
         전체
       </button>
+      {groups.map((g) => {
+        const active = current === g.value;
+        return (
+          <button
+            key={g.value}
+            type="button"
+            onClick={() => setCat(g.value)}
+            className={cn(
+              "rounded-full px-3 py-1 text-xs font-semibold transition-colors",
+              active
+                ? "bg-white text-blue-700 shadow-sm"
+                : "text-blue-600 hover:text-blue-800",
+            )}
+          >
+            {g.name}
+          </button>
+        );
+      })}
       {options.map((opt) => {
         const active = current === opt.code;
         return (

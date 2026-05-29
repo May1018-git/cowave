@@ -73,6 +73,16 @@ function getProductsById(): Map<string, Product> {
   return map;
 }
 
+/**
+ * 카테고리 prefix 매칭. 콤마 구분이면 그중 하나라도 시작하면 통과(그룹).
+ * 예: prefix="1501,1506" → 1501x 또는 1506x 둘 다 포함.
+ */
+function matchesCategoryPrefix(code: string, prefix: string): boolean {
+  if (!prefix) return true;
+  if (prefix.indexOf(",") === -1) return code.startsWith(prefix);
+  return prefix.split(",").some((p) => p && code.startsWith(p));
+}
+
 function filterSales(query: BaseQuery, sales = loadSales()): Sale[] {
   // ISO 날짜("yyyy-MM-dd")는 사전식 비교가 곧 시간순 비교이므로
   // parseISO/isWithinInterval 없이 문자열로 직접 비교한다 (296k행 × 스캔 횟수만큼 절약).
@@ -85,7 +95,7 @@ function filterSales(query: BaseQuery, sales = loadSales()): Sale[] {
     if (s.date < from || s.date > to) return false;
     if (byId) {
       const p = byId.get(s.productId);
-      if (!p || !p.categoryCode.startsWith(prefix)) return false;
+      if (!p || !matchesCategoryPrefix(p.categoryCode, prefix)) return false;
     }
     return true;
   });
@@ -299,20 +309,18 @@ export function getAchievement(query: BaseQuery): Achievement | null {
   if (!byName || Object.keys(byName).length === 0) return null;
 
   const prefix = query.categoryPrefix?.trim() || "";
-  let names: string[];
-  if (prefix) {
-    if (prefix.length > 4) return null; // 소분류는 목표 입력 단위가 아님
-    const mid = getMidCategory(prefix);
-    const key = mid ? findTargetKey(byName, mid.name) : null;
-    names = key ? [key] : [];
-  } else {
-    const keys = new Set<string>();
-    for (const c of getAvailableMidCategories()) {
-      const key = findTargetKey(byName, c.name);
-      if (key) keys.add(key);
-    }
-    names = [...keys];
+  const parts = prefix ? prefix.split(",").map((p) => p.trim()).filter(Boolean) : [];
+  if (parts.some((p) => p.length > 4)) return null; // 소분류 드릴다운은 목표 단위 아님
+  // 대상 중분류 이름: 선택된 코드들(그룹이면 여러 개), 미선택이면 데이터의 전체 중분류
+  const midNames = parts.length
+    ? (parts.map((p) => getMidCategory(p)?.name).filter(Boolean) as string[])
+    : getAvailableMidCategories().map((c) => c.name);
+  const keys = new Set<string>();
+  for (const n of midNames) {
+    const key = findTargetKey(byName, n);
+    if (key) keys.add(key);
   }
+  const names = [...keys];
   if (names.length === 0) return null;
 
   const months = monthsInRange(query.from, query.to);
@@ -383,7 +391,7 @@ export function getTopProducts(
       if (mallId && s.mallId !== mallId) continue;
       const product = productsById.get(s.productId);
       if (prefix) {
-        if (!product || !product.categoryCode.startsWith(prefix)) continue;
+        if (!product || !matchesCategoryPrefix(product.categoryCode, prefix)) continue;
       }
       if (manufacturer) {
         if (!product || (product.manufacturer ?? "").trim() !== manufacturer) continue;
@@ -517,7 +525,7 @@ function aggregateManufacturer(
   for (const s of sales) {
     const product = productsById.get(s.productId);
     if (prefix) {
-      if (!product || !product.categoryCode.startsWith(prefix)) continue;
+      if (!product || !matchesCategoryPrefix(product.categoryCode, prefix)) continue;
     }
     const manu = (product?.manufacturer || "").trim() || "기타";
     const acc = map.get(manu) ?? { gross: 0, orders: 0 };

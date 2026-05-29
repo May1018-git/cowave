@@ -209,3 +209,17 @@ export function getMidCategory(code: string): CategoryNode | undefined {
   }
   return cur && cur.depth === 2 ? cur : undefined;
 }
+
+/**
+ * 여러 중분류를 묶어 한 버튼으로 보는 그룹.
+ * 토글 값은 codes.join(",") (예: "1501,1506") 로 콤마 prefix 가 된다.
+ */
+export interface CategoryGroup {
+  id: string;
+  name: string;
+  codes: string[];
+}
+
+export const CATEGORY_GROUPS: CategoryGroup[] = [
+  { id: "health", name: "건기식", codes: ["1501", "1506"] },
+];
