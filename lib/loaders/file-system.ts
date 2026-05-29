@@ -2,6 +2,7 @@ import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { join } from "node:path";
 import type { Product, Sale, SiteId } from "../types";
 import { loadXlsxFile } from "./xlsx";
+import { cacheManifest, manifestEqual, readCache, writeCache } from "./cache";
 
 const SITE_FOLDERS: Array<{ id: SiteId; folder: string }> = [
   { id: "enuri", folder: "에누리" },
@@ -64,12 +65,35 @@ export function loadDataDir(dataDir: string): FileSystemLoadResult {
   };
 }
 
+/**
+ * 디스크 캐시 우선 로드.
+ *   - 현재 GMV 파일 매니페스트와 캐시의 매니페스트가 일치하면 JSON 캐시 사용
+ *   - 불일치(파일 추가/교체)면 엑셀 재파싱 후 캐시 갱신(쓰기 가능할 때만)
+ */
+function loadDataDirSmart(dataDir: string): FileSystemLoadResult {
+  const manifest = cacheManifest(dataDir);
+  if (manifest.length > 0) {
+    const cached = readCache(dataDir);
+    if (cached && manifestEqual(cached.manifest, manifest)) {
+      return {
+        sales: cached.sales,
+        products: cached.products,
+        warnings: [],
+        filesLoaded: manifest.length,
+      };
+    }
+  }
+  const fresh = loadDataDir(dataDir);
+  if (manifest.length > 0) writeCache(dataDir, fresh, manifest);
+  return fresh;
+}
+
 let _cached: FileSystemLoadResult | null = null;
 let _cachedFor: string | null = null;
 
 export function loadDataDirCached(dataDir: string): FileSystemLoadResult {
   if (_cachedFor === dataDir && _cached) return _cached;
-  _cached = loadDataDir(dataDir);
+  _cached = loadDataDirSmart(dataDir);
   _cachedFor = dataDir;
   return _cached;
 }
