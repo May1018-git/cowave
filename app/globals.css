@@ -22,3 +22,12 @@ body {
   border: 1px solid var(--border);
   border-radius: 12px;
 }
+
+/* 카드 안의 표를 모바일에서 가로 스크롤 가능하게 + 한글 글자 깨짐 방지 */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.table-scroll table {
+  white-space: nowrap;
+}

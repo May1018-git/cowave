@@ -38,3 +38,6 @@ next-env.d.ts
 # sample data files (local testing only, not committed)
 data/sample/**/*.xls
 data/sample/**/*.xlsx
+
+# parsed-data cache (regenerated at build time)
+data/.cache/

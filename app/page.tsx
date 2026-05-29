@@ -4,6 +4,7 @@ import { MallShareChart } from "@/components/dashboard/MallShareChart";
 import { TopProductsTable } from "@/components/dashboard/TopProductsTable";
 import { SITES } from "@/lib/sites";
 import {
+  getAchievement,
   getDataLast30Range,
   getKpiGrowth,
   getKpis,
@@ -38,24 +39,37 @@ export default function Home({ searchParams }: HomeProps) {
 
   const kpi = getKpis({ siteFilter, ...range, categoryPrefix });
   const growth = getKpiGrowth({ siteFilter, ...range, categoryPrefix });
+  const achievement = getAchievement({ siteFilter, ...range, categoryPrefix });
   const series = getSeries({
     siteFilter,
     ...trendRange,
     categoryPrefix,
     period: "day",
   });
-  const prevSeries = getSeries({
+  const prevRaw = getSeries({
     siteFilter,
     ...previousPeriodYoY(trendRange),
     categoryPrefix,
     period: "day",
-  }).map((s) => ({
-    ...s,
-    points: s.points.map((p, idx) => ({
-      ...p,
-      bucket: series[0]?.points[idx]?.bucket ?? p.bucket,
-    })),
-  }));
+  });
+  // 전년 동기 라인은 날짜(연-1) 기준으로 당기 버킷에 맞춘다. 인덱스 정렬은
+  // 전년 구간에 결측일(예: 전년 동기 일부 월 데이터 없음)이 있으면 라인이
+  // 통째로 밀리고 끝부분이 0으로 끊긴다.
+  const curBySite = new Map(series.map((c) => [c.siteId, c.points]));
+  const prevSeries = prevRaw.map((s) => {
+    const byDate = new Map(s.points.map((p) => [p.bucket, p.grossAmount]));
+    const spine = curBySite.get(s.siteId) ?? series[0]?.points ?? [];
+    return {
+      siteId: s.siteId,
+      points: spine.flatMap((cur) => {
+        const yoyDate = `${Number(cur.bucket.slice(0, 4)) - 1}${cur.bucket.slice(4)}`;
+        const gross = byDate.get(yoyDate);
+        // 전년 해당일 데이터가 없으면 점을 만들지 않는다 (0 대신 라인 끊김).
+        if (gross === undefined) return [];
+        return [{ bucket: cur.bucket, grossAmount: gross, commission: 0, quantity: 0 }];
+      }),
+    };
+  });
   const mallBreakdown = getMallBreakdown({ siteFilter, ...range, categoryPrefix });
   const topProducts = getTopProducts({
     siteFilter,
@@ -94,7 +108,24 @@ export default function Home({ searchParams }: HomeProps) {
         <KpiCard
           label={usingCustomRange ? "선택 기간 매출" : "이번 달 총매출"}
           value={formatKRW(kpi.grossAmount, { compact: true })}
-          subValue={perSiteSub}
+          subValue={
+            achievement ? (
+              <span>
+                월목표 {formatKRW(achievement.target, { compact: true })} · 달성{" "}
+                <span
+                  className={
+                    achievement.rate >= 1
+                      ? "font-medium text-emerald-600"
+                      : "font-medium text-gray-700"
+                  }
+                >
+                  {(achievement.rate * 100).toFixed(0)}%
+                </span>
+              </span>
+            ) : (
+              perSiteSub
+            )
+          }
           yoy={growth.yoy}
           mom={growth.mom}
         />

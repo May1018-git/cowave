@@ -96,6 +96,7 @@ export default function ManufacturerDetailPage({
 
       <div className="card p-5">
         <h3 className="mb-3 text-sm font-semibold">상품별 매출 (TOP 50)</h3>
+        <div className="table-scroll">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b text-left text-xs text-gray-500">
@@ -158,10 +159,12 @@ export default function ManufacturerDetailPage({
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       <div className="card p-5">
         <h3 className="mb-3 text-sm font-semibold">쇼핑몰별 매출</h3>
+        <div className="table-scroll">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b text-left text-xs text-gray-500">
@@ -198,6 +201,7 @@ export default function ManufacturerDetailPage({
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

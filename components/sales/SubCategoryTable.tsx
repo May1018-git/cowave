@@ -28,6 +28,7 @@ function GrowthCell({ percent }: { percent: number | null }) {
 
 export function SubCategoryTable({ rows }: SubCategoryTableProps) {
   return (
+    <div className="table-scroll">
     <table className="w-full text-sm">
       <thead>
         <tr className="border-b text-left text-xs text-gray-500">
@@ -69,5 +70,6 @@ export function SubCategoryTable({ rows }: SubCategoryTableProps) {
         )}
       </tbody>
     </table>
+    </div>
   );
 }
