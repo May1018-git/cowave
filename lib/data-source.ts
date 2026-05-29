@@ -1,7 +1,6 @@
 import {
   endOfMonth,
   format,
-  isWithinInterval,
   parseISO,
   startOfMonth,
   startOfWeek,
@@ -58,21 +57,37 @@ interface BaseQuery {
   categoryPrefix?: string;
 }
 
+/**
+ * productId → Product 맵을 데이터 적재 단위로 1회만 만들어 재사용한다.
+ * (52k개 상품 맵을 집계 함수마다 새로 만들던 비용 제거)
+ */
+let _productsByIdCache: { src: Product[]; map: Map<string, Product> } | null =
+  null;
+function getProductsById(): Map<string, Product> {
+  const products = loadProducts();
+  if (_productsByIdCache && _productsByIdCache.src === products) {
+    return _productsByIdCache.map;
+  }
+  const map = new Map(products.map((p) => [p.id, p]));
+  _productsByIdCache = { src: products, map };
+  return map;
+}
+
 function filterSales(query: BaseQuery, sales = loadSales()): Sale[] {
-  const fromDate = parseISO(query.from);
-  const toDate = parseISO(query.to);
+  // ISO 날짜("yyyy-MM-dd")는 사전식 비교가 곧 시간순 비교이므로
+  // parseISO/isWithinInterval 없이 문자열로 직접 비교한다 (296k행 × 스캔 횟수만큼 절약).
+  const { from, to } = query;
   const prefix = query.categoryPrefix?.trim() || "";
-  const productsById = prefix
-    ? new Map(loadProducts().map((p) => [p.id, p]))
-    : null;
+  const byId = prefix ? getProductsById() : null;
+  const allSites = query.siteFilter === "all";
   return sales.filter((s) => {
-    if (query.siteFilter !== "all" && s.siteId !== query.siteFilter) return false;
-    if (productsById) {
-      const p = productsById.get(s.productId);
+    if (!allSites && s.siteId !== query.siteFilter) return false;
+    if (s.date < from || s.date > to) return false;
+    if (byId) {
+      const p = byId.get(s.productId);
       if (!p || !p.categoryCode.startsWith(prefix)) return false;
     }
-    const d = parseISO(s.date);
-    return isWithinInterval(d, { start: fromDate, end: toDate });
+    return true;
   });
 }
 
@@ -120,8 +135,8 @@ export function getAvailableMidCategories(): {
 }
 
 function bucketKey(date: string, period: Period): string {
+  if (period === "day") return date; // s.date 가 이미 "yyyy-MM-dd"
   const d = parseISO(date);
-  if (period === "day") return format(d, "yyyy-MM-dd");
   if (period === "week") return format(startOfWeek(d, { weekStartsOn: 1 }), "yyyy-'W'II");
   return format(d, "yyyy-MM");
 }
@@ -299,24 +314,33 @@ export function getMallBreakdown(
   const manufacturer = query.manufacturer?.trim() || "";
   let sales = filterSales(query);
   if (manufacturer) {
-    const productsById = new Map(loadProducts().map((p) => [p.id, p]));
+    const productsById = getProductsById();
     sales = sales.filter((s) => {
       const p = productsById.get(s.productId);
       return (p?.manufacturer ?? "").trim() === manufacturer;
     });
   }
-  const total = sales.reduce((acc, s) => acc + s.grossAmount, 0);
+  // 1회 패스로 몰별 집계 (기존엔 MALLS(23) × sales 전체 필터 = 23패스)
+  const agg = new Map<string, { gross: number; orders: number; commission: number }>();
+  let total = 0;
+  for (const s of sales) {
+    total += s.grossAmount;
+    const a = agg.get(s.mallId) ?? { gross: 0, orders: 0, commission: 0 };
+    a.gross += s.grossAmount;
+    a.orders += 1;
+    a.commission += s.commission;
+    agg.set(s.mallId, a);
+  }
 
   const rows = MALLS.map((m) => {
-    const matched = sales.filter((s) => s.mallId === m.id);
-    const gross = matched.reduce((acc, s) => acc + s.grossAmount, 0);
-    const commission = matched.reduce((acc, s) => acc + s.commission, 0);
+    const a = agg.get(m.id);
+    const gross = a?.gross ?? 0;
     return {
       mallId: m.id,
       mallName: m.name,
       grossAmount: gross,
-      orders: matched.length,
-      commission,
+      orders: a?.orders ?? 0,
+      commission: a?.commission ?? 0,
       share: total === 0 ? 0 : gross / total,
     };
   });
@@ -330,7 +354,7 @@ export function getTopProducts(
   const prefix = query.categoryPrefix?.trim() || "";
   const mallId = query.mallId?.trim() || "";
   const manufacturer = query.manufacturer?.trim() || "";
-  const productsById = new Map(loadProducts().map((p) => [p.id, p]));
+  const productsById = getProductsById();
 
   const rank = (q: BaseQuery) => {
     const sales = filterSales(q);
@@ -389,7 +413,7 @@ export function getCategoryBreakdown(query: BaseQuery): {
   grossAmount: number;
 }[] {
   const sales = filterSales(query);
-  const productsById = new Map(loadProducts().map((p) => [p.id, p]));
+  const productsById = getProductsById();
   const map = new Map<string, { name: string; gross: number }>();
   for (const s of sales) {
     const product = productsById.get(s.productId);
@@ -420,7 +444,7 @@ export interface SubCategoryRow {
 
 function aggregateSubCategory(query: BaseQuery): Map<string, { name: string; gross: number; orders: number }> {
   const sales = filterSales(query);
-  const productsById = new Map(loadProducts().map((p) => [p.id, p]));
+  const productsById = getProductsById();
   const map = new Map<string, { name: string; gross: number; orders: number }>();
   const OTHER_KEY = "__other__";
   for (const s of sales) {
@@ -468,7 +492,7 @@ function aggregateManufacturer(
   prefix: string,
 ): Map<string, { gross: number; orders: number }> {
   const sales = filterSales(query);
-  const productsById = new Map(loadProducts().map((p) => [p.id, p]));
+  const productsById = getProductsById();
   const map = new Map<string, { gross: number; orders: number }>();
   for (const s of sales) {
     const product = productsById.get(s.productId);
@@ -515,7 +539,7 @@ export interface MallCategoryCell {
 
 export function getMallCategoryMatrix(query: BaseQuery): MallCategoryCell[] {
   const sales = filterSales(query);
-  const productsById = new Map(loadProducts().map((p) => [p.id, p]));
+  const productsById = getProductsById();
   const map = new Map<string, MallCategoryCell>();
   for (const s of sales) {
     const product = productsById.get(s.productId);

@@ -2,22 +2,29 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
+import { useTransition } from "react";
+import { cn } from "@/lib/utils";
 
 export function DateRangePicker() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
   const from = searchParams.get("from") ?? "";
   const to = searchParams.get("to") ?? "";
 
   function pushParams(nextFrom: string, nextTo: string) {
+    if (nextFrom === from && nextTo === to) return; // 변화 없으면 navigation 생략
     const params = new URLSearchParams(searchParams.toString());
     if (nextFrom) params.set("from", nextFrom);
     else params.delete("from");
     if (nextTo) params.set("to", nextTo);
     else params.delete("to");
     const qs = params.toString();
-    router.push(qs ? `${pathname}?${qs}` : pathname);
+    // replace + transition: 히스토리 누적 방지 + 입력이 멈추지 않도록 비차단 전환
+    startTransition(() => {
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    });
   }
 
   function setRange(start: Date, end: Date) {
@@ -35,7 +42,12 @@ export function DateRangePicker() {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div
+      className={cn(
+        "flex flex-wrap items-center gap-2 transition-opacity",
+        isPending && "opacity-60",
+      )}
+    >
       <input
         type="date"
         value={from}
