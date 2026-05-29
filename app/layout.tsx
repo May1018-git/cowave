@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
+import { AppFrame } from "@/components/layout/AppFrame";
 
 export const metadata: Metadata = {
   title: "Cowave 대시보드",
@@ -17,19 +18,20 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="min-h-screen antialiased">
-        <div className="flex min-h-screen">
-          <Suspense fallback={<aside className="hidden w-56 shrink-0 border-r bg-white md:block" />}>
-            <Sidebar />
-          </Suspense>
-          <div className="flex flex-1 flex-col">
+        <AppFrame
+          sidebar={
+            <Suspense fallback={<aside className="hidden w-56 shrink-0 border-r bg-white md:block" />}>
+              <Sidebar />
+            </Suspense>
+          }
+          header={
             <Suspense fallback={<div className="h-14 border-b bg-white" />}>
               <Header />
             </Suspense>
-            <main className="flex-1 p-3 md:p-6">
-              <Suspense fallback={<div>로딩 중...</div>}>{children}</Suspense>
-            </main>
-          </div>
-        </div>
+          }
+        >
+          <Suspense fallback={<div>로딩 중...</div>}>{children}</Suspense>
+        </AppFrame>
       </body>
     </html>
   );
