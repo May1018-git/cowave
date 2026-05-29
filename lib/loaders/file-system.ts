@@ -67,21 +67,22 @@ export function loadDataDir(dataDir: string): FileSystemLoadResult {
 
 /**
  * 디스크 캐시 우선 로드.
- *   - 현재 GMV 파일 매니페스트와 캐시의 매니페스트가 일치하면 JSON 캐시 사용
- *   - 불일치(파일 추가/교체)면 엑셀 재파싱 후 캐시 갱신(쓰기 가능할 때만)
+ *   - 캐시가 있고, (원본 xls 가 번들에 없어 매니페스트가 비었거나 |
+ *     매니페스트가 일치)하면 캐시 사용
+ *       · 런타임(Vercel): 번들에 xls 없음 → 매니페스트 빔 → 캐시 신뢰
+ *       · 로컬 dev: xls 있음 → 매니페스트 비교로 변경 감지
+ *   - 캐시가 없거나 매니페스트 불일치(dev 에서 파일 추가/교체)면 재파싱 후 갱신
  */
 function loadDataDirSmart(dataDir: string): FileSystemLoadResult {
   const manifest = cacheManifest(dataDir);
-  if (manifest.length > 0) {
-    const cached = readCache(dataDir);
-    if (cached && manifestEqual(cached.manifest, manifest)) {
-      return {
-        sales: cached.sales,
-        products: cached.products,
-        warnings: [],
-        filesLoaded: manifest.length,
-      };
-    }
+  const cached = readCache(dataDir);
+  if (cached && (manifest.length === 0 || manifestEqual(cached.manifest, manifest))) {
+    return {
+      sales: cached.sales,
+      products: cached.products,
+      warnings: [],
+      filesLoaded: cached.manifest.length,
+    };
   }
   const fresh = loadDataDir(dataDir);
   if (manifest.length > 0) writeCache(dataDir, fresh, manifest);
