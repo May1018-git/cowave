@@ -109,8 +109,8 @@ export default function UploadPage() {
       <header className="space-y-1">
         <h1 className="text-xl font-bold text-gray-900">데이터 업로드</h1>
         <p className="text-sm text-gray-500">
-          매출 xls 파일을 여기에 끌어다 놓으면 GitHub 에 자동 커밋되고, 2-3분
-          뒤 대시보드에 반영됩니다.
+          새로 받은 매출 xls 파일을 여기에 올리면 대시보드에 자동 반영됩니다.
+          (업로드 후 약 2-3분 소요)
         </p>
       </header>
 
@@ -222,8 +222,16 @@ export default function UploadPage() {
       <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-xs text-amber-900">
         <p className="font-semibold">참고</p>
         <ul className="mt-1 list-disc space-y-0.5 pl-4">
-          <li>같은 이름의 파일을 다시 올리면 기존 파일을 덮어씁니다.</li>
-          <li>업로드 후 Vercel 재배포가 끝나야 대시보드에 반영됩니다(약 2-3분).</li>
+          <li>
+            같은 이름의 파일을 다시 올리면 기존 파일을 덮어씁니다.
+            <div className="mt-0.5 text-amber-700">
+              예시 파일명:{" "}
+              <code className="rounded bg-amber-100 px-1 py-0.5 font-mono text-[11px]">
+                건강식품,홍삼(1501)GMV_RAWDATA_2025-05-01_2025-05-31.xls
+              </code>
+            </div>
+          </li>
+          <li>업로드 후 약 2-3분 뒤 대시보드에 반영됩니다.</li>
           <li>한 파일당 100MB 이하 가능 (일반 GMV 파일은 10-15MB 수준).</li>
         </ul>
       </div>
