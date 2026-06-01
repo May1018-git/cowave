@@ -17,6 +17,27 @@ export interface ValidationError {
   message: string;
 }
 
+/**
+ * 에누리 GMV export 한도 추정 임계값. 12MB 안팎의 xls 파일은 20,000행 한도에
+ * 도달했을 가능성이 매우 높음(현재 12MB ≒ 20K행). 잘리면 매출 누락 발생.
+ */
+const TRUNCATION_SIZE_BYTES = 11_500_000;
+
+export interface SizeWarning {
+  code: "possibly-truncated";
+  message: string;
+}
+
+export function checkFileSizeWarning(size: number): SizeWarning | null {
+  if (size >= TRUNCATION_SIZE_BYTES) {
+    return {
+      code: "possibly-truncated",
+      message: `⚠ 파일이 ${(size / 1024 / 1024).toFixed(1)}MB — 에누리 export 20,000행 한도에 걸려 매출 일부가 잘렸을 수 있습니다. 더 짧은 기간(예: 10일 단위)으로 쪼개 받아 올리세요.`,
+    };
+  }
+  return null;
+}
+
 export function validateUploadFilename(name: string): ValidationError | null {
   // 경로 탈출 방지
   if (name.includes("/") || name.includes("\\") || name.includes("..") || name.startsWith(".")) {

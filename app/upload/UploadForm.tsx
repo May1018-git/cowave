@@ -11,13 +11,18 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { validateUploadFilename } from "@/lib/upload-validation";
+import {
+  validateUploadFilename,
+  checkFileSizeWarning,
+} from "@/lib/upload-validation";
 
 type Status = "pending" | "uploading" | "committing" | "done" | "error" | "rejected";
 interface FileEntry {
   file: File;
   status: Status;
   message?: string;
+  /** 업로드는 통과시키되 표시할 주의 사항 (예: 행 한도 절단 의심) */
+  warning?: string;
 }
 
 interface UploadFormProps {
@@ -38,9 +43,15 @@ export function UploadForm({ cacheSizeMB, midCategories }: UploadFormProps) {
       ...prev,
       ...arr.map((file) => {
         const err = validateUploadFilename(file.name);
-        return err
-          ? { file, status: "rejected" as Status, message: err.message }
-          : { file, status: "pending" as Status };
+        if (err) {
+          return { file, status: "rejected" as Status, message: err.message };
+        }
+        const warn = checkFileSizeWarning(file.size);
+        return {
+          file,
+          status: "pending" as Status,
+          warning: warn?.message,
+        };
       }),
     ]);
   }
@@ -209,6 +220,7 @@ export function UploadForm({ cacheSizeMB, midCategories }: UploadFormProps) {
                 className={cn(
                   "flex items-center gap-3 px-4 py-2",
                   e.status === "rejected" && "bg-red-50",
+                  e.status === "pending" && e.warning && "bg-amber-50",
                 )}
               >
                 <FileSpreadsheet
@@ -236,11 +248,14 @@ export function UploadForm({ cacheSizeMB, midCategories }: UploadFormProps) {
                       "text-xs",
                       e.status === "rejected"
                         ? "text-red-600"
-                        : "text-gray-500",
+                        : e.warning && e.status === "pending"
+                          ? "text-amber-700"
+                          : "text-gray-500",
                     )}
                   >
                     {(e.file.size / 1024 / 1024).toFixed(1)}MB
                     {e.message ? ` · ${e.message}` : ""}
+                    {e.warning && !e.message ? ` · ${e.warning}` : ""}
                   </div>
                 </div>
                 <StatusIcon status={e.status} />
@@ -303,6 +318,12 @@ export function UploadForm({ cacheSizeMB, midCategories }: UploadFormProps) {
           <li>같은 이름의 파일을 다시 올리면 기존 파일을 덮어씁니다.</li>
           <li>업로드 후 약 2-3분 뒤 대시보드에 반영됩니다.</li>
           <li>한 파일당 100MB 이하 가능 (일반 GMV 파일은 10-15MB 수준).</li>
+          <li>
+            <b>에누리 export 20,000행 한도</b> — 한 파일이 약 11MB 를 넘으면
+            데이터가 잘렸을 가능성이 있습니다. 거래량 많은 카테고리(예:
+            생수/음료/주류)는 10일 단위로 쪼개서 받으세요. 의심 파일은 업로드
+            목록에 노란색으로 표시됩니다.
+          </li>
         </ul>
       </div>
 
