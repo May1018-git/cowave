@@ -30,6 +30,10 @@ export const MALLS: Mall[] = [
   { id: "5438", name: "우체국쇼핑", commissionRate: 0.025 },
   { id: "7455", name: "롯데마트몰", commissionRate: 0.03 },
   { id: "46826", name: "어바웃펫", commissionRate: 0.035 },
+  { id: "7851", name: "더현대닷컴", commissionRate: 0.03 },
+  { id: "6389", name: "패션플러스", commissionRate: 0.03 },
+  { id: "27550", name: "쿠쿠몰", commissionRate: 0.03 },
+  { id: "24763", name: "무신사스토어", commissionRate: 0.03 },
 ];
 
 const MALL_BY_ID = new Map(MALLS.map((m) => [m.id, m]));
