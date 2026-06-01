@@ -1,5 +1,6 @@
 import { existsSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { CATEGORIES } from "@/lib/category-map";
 import { UploadForm } from "./UploadForm";
 
 /**
@@ -19,5 +20,9 @@ function getCacheSizeMB(): number | null {
 
 export default function UploadPage() {
   const cacheSizeMB = getCacheSizeMB();
-  return <UploadForm cacheSizeMB={cacheSizeMB} />;
+  const midCategories = CATEGORIES.filter((c) => c.depth === 2).map((c) => ({
+    code: c.code,
+    name: c.name,
+  }));
+  return <UploadForm cacheSizeMB={cacheSizeMB} midCategories={midCategories} />;
 }

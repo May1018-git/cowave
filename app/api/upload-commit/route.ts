@@ -5,6 +5,7 @@
 import { NextResponse } from "next/server";
 import { del } from "@vercel/blob";
 import { commitFileToGitHub } from "@/lib/github";
+import { validateUploadFilename } from "@/lib/upload-validation";
 
 export const maxDuration = 60;
 
@@ -28,23 +29,10 @@ export async function POST(req: Request) {
     );
   }
 
-  // 파일명 검증 — 경로 탈출 방지
-  if (
-    filename.includes("/") ||
-    filename.includes("\\") ||
-    filename.includes("..") ||
-    filename.startsWith(".")
-  ) {
-    return NextResponse.json(
-      { error: "파일명에 / \\ .. 포함하거나 . 로 시작할 수 없습니다." },
-      { status: 400 },
-    );
-  }
-  if (!/\.xlsx?$/i.test(filename)) {
-    return NextResponse.json(
-      { error: "xls 또는 xlsx 파일만 업로드 가능합니다." },
-      { status: 400 },
-    );
+  // 파일명 검증 — 경로 탈출 + GMV 규칙
+  const vErr = validateUploadFilename(filename);
+  if (vErr) {
+    return NextResponse.json({ error: vErr.message }, { status: 400 });
   }
 
   // Blob URL 검증 — Vercel Blob 도메인만 허용

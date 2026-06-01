@@ -11,26 +11,37 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { validateUploadFilename } from "@/lib/upload-validation";
 
-type Status = "pending" | "uploading" | "committing" | "done" | "error";
+type Status = "pending" | "uploading" | "committing" | "done" | "error" | "rejected";
 interface FileEntry {
   file: File;
   status: Status;
   message?: string;
 }
 
-export function UploadForm({ cacheSizeMB }: { cacheSizeMB: number | null }) {
+interface UploadFormProps {
+  cacheSizeMB: number | null;
+  midCategories: { code: string; name: string }[];
+}
+
+export function UploadForm({ cacheSizeMB, midCategories }: UploadFormProps) {
   const [entries, setEntries] = useState<FileEntry[]>([]);
   const [dragging, setDragging] = useState(false);
   const [running, setRunning] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function addFiles(files: FileList | File[]) {
-    const arr = Array.from(files).filter((f) => /\.xlsx?$/i.test(f.name));
+    const arr = Array.from(files);
     if (arr.length === 0) return;
     setEntries((prev) => [
       ...prev,
-      ...arr.map((file) => ({ file, status: "pending" as Status })),
+      ...arr.map((file) => {
+        const err = validateUploadFilename(file.name);
+        return err
+          ? { file, status: "rejected" as Status, message: err.message }
+          : { file, status: "pending" as Status };
+      }),
     ]);
   }
 
@@ -103,6 +114,7 @@ export function UploadForm({ cacheSizeMB }: { cacheSizeMB: number | null }) {
 
   const pendingCount = entries.filter((e) => e.status === "pending").length;
   const doneCount = entries.filter((e) => e.status === "done").length;
+  const rejectedCount = entries.filter((e) => e.status === "rejected").length;
 
   return (
     <div className="mx-auto max-w-3xl space-y-4">
@@ -163,6 +175,11 @@ export function UploadForm({ cacheSizeMB }: { cacheSizeMB: number | null }) {
                   (대기 {pendingCount}개)
                 </span>
               )}
+              {rejectedCount > 0 && (
+                <span className="ml-2 text-xs text-red-600">
+                  · 거부 {rejectedCount}개
+                </span>
+              )}
             </div>
             <div className="flex gap-2">
               {doneCount > 0 && (
@@ -189,53 +206,119 @@ export function UploadForm({ cacheSizeMB }: { cacheSizeMB: number | null }) {
             {entries.map((e, i) => (
               <li
                 key={`${e.file.name}-${i}`}
-                className="flex items-center gap-3 px-4 py-2"
+                className={cn(
+                  "flex items-center gap-3 px-4 py-2",
+                  e.status === "rejected" && "bg-red-50",
+                )}
               >
                 <FileSpreadsheet
                   size={16}
-                  className="shrink-0 text-emerald-600"
+                  className={cn(
+                    "shrink-0",
+                    e.status === "rejected"
+                      ? "text-red-500"
+                      : "text-emerald-600",
+                  )}
                 />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm text-gray-800">
+                  <div
+                    className={cn(
+                      "truncate text-sm",
+                      e.status === "rejected"
+                        ? "text-red-800"
+                        : "text-gray-800",
+                    )}
+                  >
                     {e.file.name}
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div
+                    className={cn(
+                      "text-xs",
+                      e.status === "rejected"
+                        ? "text-red-600"
+                        : "text-gray-500",
+                    )}
+                  >
                     {(e.file.size / 1024 / 1024).toFixed(1)}MB
                     {e.message ? ` · ${e.message}` : ""}
                   </div>
                 </div>
                 <StatusIcon status={e.status} />
-                {e.status === "pending" && !running && (
-                  <button
-                    type="button"
-                    onClick={() => removeEntry(i)}
-                    className="text-gray-400 hover:text-gray-700"
-                    aria-label="제거"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
+                {(e.status === "pending" || e.status === "rejected") &&
+                  !running && (
+                    <button
+                      type="button"
+                      onClick={() => removeEntry(i)}
+                      className="text-gray-400 hover:text-gray-700"
+                      aria-label="제거"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
               </li>
             ))}
           </ul>
         </div>
       )}
 
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-xs text-red-900">
+        <p className="font-semibold">❌ 업로드 거부 — 이런 파일은 자동으로 막힙니다</p>
+        <ul className="mt-1 list-disc space-y-1 pl-4">
+          <li>
+            <b>카테고리 코드 없는 파일</b>
+            <div className="mt-0.5 text-red-700">
+              <code className="rounded bg-red-100 px-1 py-0.5 font-mono text-[11px]">
+                GMV_RAWDATA_2026-05-01_2026-05-31.xls
+              </code>
+              <span className="ml-1">— 모든 카테고리가 섞여 매출이 중복 집계됨</span>
+            </div>
+          </li>
+          <li>
+            <b>날짜 기간이 겹치는 파일</b> — 같은 카테고리에 이미 그 달 파일이
+            있으면 동일 기간을 두 번 집계하지 않도록 주의.
+          </li>
+          <li>
+            <b>GMV 원본이 아닌 파일</b> — 요약본·복사본·임시 파일 등.
+            파일명에 &quot;임시/복사본/요약/copy&quot; 가 포함되면 거부됩니다.
+          </li>
+          <li>
+            <b>Office 임시 파일</b> —{" "}
+            <code className="rounded bg-red-100 px-1 py-0.5 font-mono text-[11px]">
+              ~$건강식품(1501)...xls
+            </code>{" "}
+            처럼 <code>~$</code> 로 시작하는 lock 파일.
+          </li>
+        </ul>
+      </div>
+
       <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-xs text-amber-900">
         <p className="font-semibold">참고</p>
         <ul className="mt-1 list-disc space-y-0.5 pl-4">
           <li>
-            같은 이름의 파일을 다시 올리면 기존 파일을 덮어씁니다.
-            <div className="mt-0.5 text-amber-700">
-              예시 파일명:{" "}
-              <code className="rounded bg-amber-100 px-1 py-0.5 font-mono text-[11px]">
-                건강식품,홍삼(1501)GMV_RAWDATA_2025-05-01_2025-05-31.xls
-              </code>
-            </div>
+            정상 파일명 예시:{" "}
+            <code className="rounded bg-amber-100 px-1 py-0.5 font-mono text-[11px]">
+              건강식품,홍삼(1501)GMV_RAWDATA_2025-05-01_2025-05-31.xls
+            </code>
           </li>
+          <li>같은 이름의 파일을 다시 올리면 기존 파일을 덮어씁니다.</li>
           <li>업로드 후 약 2-3분 뒤 대시보드에 반영됩니다.</li>
           <li>한 파일당 100MB 이하 가능 (일반 GMV 파일은 10-15MB 수준).</li>
         </ul>
+      </div>
+
+      <div className="rounded-lg border bg-white p-4 text-xs">
+        <p className="font-semibold text-gray-800">📂 카테고리 코드</p>
+        <p className="mt-0.5 text-gray-500">
+          파일명 괄호 안 네 자리 숫자(예: <code>(1501)</code>)가 카테고리 코드.
+        </p>
+        <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-3">
+          {midCategories.map((c) => (
+            <div key={c.code} className="flex justify-between gap-2">
+              <span className="text-gray-700">{c.name}</span>
+              <code className="font-mono text-gray-500">({c.code})</code>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -244,7 +327,7 @@ export function UploadForm({ cacheSizeMB }: { cacheSizeMB: number | null }) {
 function StatusIcon({ status }: { status: Status }) {
   if (status === "done")
     return <CheckCircle2 size={16} className="text-emerald-600" />;
-  if (status === "error")
+  if (status === "error" || status === "rejected")
     return <XCircle size={16} className="text-red-600" />;
   if (status === "uploading" || status === "committing")
     return <Loader2 size={16} className="animate-spin text-blue-600" />;
