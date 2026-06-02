@@ -11,8 +11,8 @@ export function Header() {
       <div className="flex items-center gap-2">
         <MobileNav />
         <h1 className="text-sm font-semibold text-gray-700 md:text-sm">
-          <span className="md:hidden">Cowave</span>
-          <span className="hidden md:inline">가격비교 사이트 운영 대시보드</span>
+          <span className="md:hidden">식품 카테고리 대시보드</span>
+          <span className="hidden md:inline">식품 카테고리 대시보드</span>
         </h1>
       </div>
       <div className="flex flex-wrap items-center gap-2 md:gap-3">
