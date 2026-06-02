@@ -230,6 +230,7 @@ function generateSales(): Sale[] {
           quantity,
           grossAmount: gross,
           commission,
+          categoryCode: product.categoryCode,
         });
       }
     }

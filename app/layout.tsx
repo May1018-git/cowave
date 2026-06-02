@@ -6,8 +6,8 @@ import { Header } from "@/components/layout/Header";
 import { AppFrame } from "@/components/layout/AppFrame";
 
 export const metadata: Metadata = {
-  title: "Cowave 대시보드",
-  description: "에누리·다나와 매출 및 카탈로그 통합 대시보드",
+  title: "식품 카테고리 대시보드",
+  description: "에누리 매출 및 카탈로그 통합 대시보드",
 };
 
 export default function RootLayout({

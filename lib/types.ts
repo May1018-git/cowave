@@ -44,6 +44,8 @@ export interface Sale {
   quantity: number;
   grossAmount: number;
   commission: number;
+  /** 이 거래의 카테고리 코드. 파일명 카테고리 prefix 기준으로 정규화됨. */
+  categoryCode: string;
 }
 
 export type Period = "day" | "week" | "month";

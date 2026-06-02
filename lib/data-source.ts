@@ -88,15 +88,11 @@ function filterSales(query: BaseQuery, sales = loadSales()): Sale[] {
   // parseISO/isWithinInterval 없이 문자열로 직접 비교한다 (296k행 × 스캔 횟수만큼 절약).
   const { from, to } = query;
   const prefix = query.categoryPrefix?.trim() || "";
-  const byId = prefix ? getProductsById() : null;
   const allSites = query.siteFilter === "all";
   return sales.filter((s) => {
     if (!allSites && s.siteId !== query.siteFilter) return false;
     if (s.date < from || s.date > to) return false;
-    if (byId) {
-      const p = byId.get(s.productId);
-      if (!p || !matchesCategoryPrefix(p.categoryCode, prefix)) return false;
-    }
+    if (prefix && !matchesCategoryPrefix(s.categoryCode, prefix)) return false;
     return true;
   });
 }
@@ -390,9 +386,6 @@ export function getTopProducts(
     for (const s of sales) {
       if (mallId && s.mallId !== mallId) continue;
       const product = productsById.get(s.productId);
-      if (prefix) {
-        if (!product || !matchesCategoryPrefix(product.categoryCode, prefix)) continue;
-      }
       if (manufacturer) {
         if (!product || (product.manufacturer ?? "").trim() !== manufacturer) continue;
       }
@@ -524,9 +517,6 @@ function aggregateManufacturer(
   const map = new Map<string, { gross: number; orders: number }>();
   for (const s of sales) {
     const product = productsById.get(s.productId);
-    if (prefix) {
-      if (!product || !matchesCategoryPrefix(product.categoryCode, prefix)) continue;
-    }
     const manu = (product?.manufacturer || "").trim() || "기타";
     const acc = map.get(manu) ?? { gross: 0, orders: 0 };
     acc.gross += s.grossAmount;

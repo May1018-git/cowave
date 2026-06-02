@@ -28,7 +28,7 @@ import type { FileSystemLoadResult } from "./file-system";
  * (런타임 번들에는 원본 .xls 가 없어 매니페스트가 비는데, 이때는 캐시를
  * 그대로 신뢰한다 — 배포 시점에 올바른 데이터로 만들어졌기 때문)
  */
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 3;
 const SITE_FOLDERS = ["에누리"];
 
 export interface FileMeta {
@@ -44,6 +44,17 @@ interface CacheFileV2 {
   sites: SiteId[];
   // [dateIdx, siteIdx, productIdx, mallId, quantity, grossAmount, commission]
   sales: [number, number, number, string, number, number, number][];
+}
+
+interface CacheFileV3 {
+  version: number;
+  manifest: FileMeta[];
+  products: Product[];
+  dates: string[];
+  sites: SiteId[];
+  cats: string[];
+  // [dateIdx, siteIdx, productIdx, mallId, quantity, grossAmount, commission, catIdx]
+  sales: [number, number, number, string, number, number, number, number][];
 }
 
 export interface DecodedCache {
@@ -85,7 +96,7 @@ export function readCache(dataDir: string): DecodedCache | null {
   const p = cachePath(dataDir);
   if (!existsSync(p)) return null;
   try {
-    const obj = JSON.parse(readFileSync(p, "utf8")) as CacheFileV2;
+    const obj = JSON.parse(readFileSync(p, "utf8")) as CacheFileV3;
     if (
       obj.version !== CACHE_VERSION ||
       !Array.isArray(obj.sales) ||
@@ -96,7 +107,7 @@ export function readCache(dataDir: string): DecodedCache | null {
     ) {
       return null;
     }
-    const { dates, sites, products } = obj;
+    const { dates, sites, products, cats } = obj;
     const sales: Sale[] = obj.sales.map((r, i) => ({
       id: `s${i}`,
       date: dates[r[0]],
@@ -106,6 +117,7 @@ export function readCache(dataDir: string): DecodedCache | null {
       quantity: r[4],
       grossAmount: r[5],
       commission: r[6],
+      categoryCode: cats?.[r[7]] ?? "",
     }));
     return { manifest: obj.manifest, sales, products };
   } catch {
@@ -124,6 +136,8 @@ export function writeCache(
     const dateIdx = new Map<string, number>();
     const sites: SiteId[] = [];
     const siteIdx = new Map<SiteId, number>();
+    const cats: string[] = [];
+    const catIdx = new Map<string, number>();
     const prodIdx = new Map<string, number>();
     result.products.forEach((prod, i) => prodIdx.set(prod.id, i));
 
@@ -140,8 +154,14 @@ export function writeCache(
         sites.push(s.siteId);
         siteIdx.set(s.siteId, si);
       }
+      let ci = catIdx.get(s.categoryCode);
+      if (ci === undefined) {
+        ci = cats.length;
+        cats.push(s.categoryCode);
+        catIdx.set(s.categoryCode, ci);
+      }
       const pi = prodIdx.get(s.productId) ?? -1;
-      return [di, si, pi, s.mallId, s.quantity, s.grossAmount, s.commission] as [
+      return [di, si, pi, s.mallId, s.quantity, s.grossAmount, s.commission, ci] as [
         number,
         number,
         number,
@@ -149,16 +169,18 @@ export function writeCache(
         number,
         number,
         number,
+        number,
       ];
     });
 
     mkdirSync(dirname(p), { recursive: true });
-    const payload: CacheFileV2 = {
+    const payload: CacheFileV3 = {
       version: CACHE_VERSION,
       manifest,
       products: result.products,
       dates,
       sites,
+      cats,
       sales,
     };
     writeFileSync(p, JSON.stringify(payload));

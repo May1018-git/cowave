@@ -257,7 +257,12 @@ export function loadXlsxFile(
       String(getCol(row, ENURI_HEADERS.mallProductName) ?? "").trim() ||
       productCode;
     const productId = hasModel ? `M-${modelRaw}` : `C-${productCode}`;
-    const categoryCode = String(getCol(row, ENURI_HEADERS.category) ?? "").trim();
+    const rowCat = String(getCol(row, ENURI_HEADERS.category) ?? "").trim();
+    // 파일명 카테고리 prefix 와 행 카테고리가 불일치하면 파일 카테고리를 사용.
+    // 에누리에서 한 상품이 여러 카테고리에 cross-listed 돼 있을 때, 다른 카테고리
+    // 파일에 같은 상품코드가 등장해도 매출이 해당 파일의 카테고리로 귀속되게 한다.
+    const fileCat = parsed?.categoryCode ?? "";
+    const categoryCode = fileCat && !rowCat.startsWith(fileCat) ? fileCat : rowCat;
     const manufacturer = String(getCol(row, ENURI_HEADERS.manufacturer) ?? "").trim();
 
     const quantity = Number(getCol(row, ENURI_HEADERS.quantity) ?? 1) || 1;
@@ -277,6 +282,7 @@ export function loadXlsxFile(
       quantity,
       grossAmount: gross,
       commission,
+      categoryCode,
     });
 
     if (!products.has(productId)) {

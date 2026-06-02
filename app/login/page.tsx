@@ -37,7 +37,7 @@ function LoginForm() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <form onSubmit={onSubmit} className="card w-full max-w-xs p-6">
-        <h1 className="text-lg font-semibold text-gray-800">Cowave 대시보드</h1>
+        <h1 className="text-lg font-semibold text-gray-800">식품 카테고리 대시보드</h1>
         <p className="mt-1 text-sm text-gray-500">비밀번호를 입력하세요.</p>
         <input
           type="password"
