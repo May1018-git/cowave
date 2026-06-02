@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 60 * 60 * 24 * 30, // 30일
+    // maxAge 미설정 → 세션 쿠키: 브라우저 닫으면 자동 만료
   });
   return res;
 }
