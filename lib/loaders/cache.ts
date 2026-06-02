@@ -36,16 +36,6 @@ export interface FileMeta {
   size: number;
 }
 
-interface CacheFileV2 {
-  version: number;
-  manifest: FileMeta[];
-  products: Product[];
-  dates: string[];
-  sites: SiteId[];
-  // [dateIdx, siteIdx, productIdx, mallId, quantity, grossAmount, commission]
-  sales: [number, number, number, string, number, number, number][];
-}
-
 interface CacheFileV3 {
   version: number;
   manifest: FileMeta[];

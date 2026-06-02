@@ -375,7 +375,6 @@ export function getTopProducts(
   query: BaseQuery & { limit?: number; categoryPrefix?: string; mallId?: string; manufacturer?: string },
 ): ProductRankRow[] {
   const limit = query.limit ?? 10;
-  const prefix = query.categoryPrefix?.trim() || "";
   const mallId = query.mallId?.trim() || "";
   const manufacturer = query.manufacturer?.trim() || "";
   const productsById = getProductsById();
@@ -510,7 +509,6 @@ export interface ManufacturerRow {
 
 function aggregateManufacturer(
   query: BaseQuery,
-  prefix: string,
 ): Map<string, { gross: number; orders: number }> {
   const sales = filterSales(query);
   const productsById = getProductsById();
@@ -530,10 +528,9 @@ export function getTopManufacturers(
   query: BaseQuery & { limit?: number; categoryPrefix?: string },
 ): ManufacturerRow[] {
   const limit = query.limit ?? 20;
-  const prefix = query.categoryPrefix?.trim() || "";
-  const current = aggregateManufacturer(query, prefix);
-  const yoyPrev = aggregateManufacturer({ ...query, ...previousPeriodYoY(query) }, prefix);
-  const momPrev = aggregateManufacturer({ ...query, ...previousPeriodMoM(query) }, prefix);
+  const current = aggregateManufacturer(query);
+  const yoyPrev = aggregateManufacturer({ ...query, ...previousPeriodYoY(query) });
+  const momPrev = aggregateManufacturer({ ...query, ...previousPeriodMoM(query) });
   return [...current.entries()]
     .map(([manufacturer, { gross, orders }]) => ({
       manufacturer,
