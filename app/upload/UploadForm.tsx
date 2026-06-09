@@ -280,12 +280,16 @@ export function UploadForm({ cacheSizeMB, midCategories }: UploadFormProps) {
         <p className="font-semibold">❌ 업로드 거부 — 이런 파일은 자동으로 막힙니다</p>
         <ul className="mt-1 list-disc space-y-1 pl-4">
           <li>
-            <b>카테고리 코드 없는 파일</b>
+            <b>카테고리 코드 없는 월간 파일</b>
             <div className="mt-0.5 text-red-700">
               <code className="rounded bg-red-100 px-1 py-0.5 font-mono text-[11px]">
                 GMV_RAWDATA_2026-05-01_2026-05-31.xls
               </code>
               <span className="ml-1">— 모든 카테고리가 섞여 매출이 중복 집계됨</span>
+            </div>
+            <div className="mt-0.5 text-red-700">
+              ※ 단, <b>1~3일짜리 단일 일자 파일</b>은 카테고리 코드 없어도 OK
+              (예: <code className="rounded bg-red-100 px-1 py-0.5 font-mono text-[11px]">GMV_RAWDATA_2026-06-08_2026-06-08.xls</code>)
             </div>
           </li>
           <li>
@@ -310,10 +314,17 @@ export function UploadForm({ cacheSizeMB, midCategories }: UploadFormProps) {
         <p className="font-semibold">참고</p>
         <ul className="mt-1 list-disc space-y-0.5 pl-4">
           <li>
-            정상 파일명 예시:{" "}
+            정상 파일명 예시 — 카테고리별 월간:{" "}
             <code className="rounded bg-amber-100 px-1 py-0.5 font-mono text-[11px]">
               건강식품,홍삼(1501)GMV_RAWDATA_2025-05-01_2025-05-31.xls
             </code>
+          </li>
+          <li>
+            정상 파일명 예시 — 일자별 단일(전 카테고리 통합):{" "}
+            <code className="rounded bg-amber-100 px-1 py-0.5 font-mono text-[11px]">
+              GMV_RAWDATA_2026-06-08_2026-06-08.xls
+            </code>{" "}
+            (또는 주말 묶음 <code className="rounded bg-amber-100 px-1 py-0.5 font-mono text-[11px]">2026-06-06_2026-06-08</code>, 최대 3일)
           </li>
           <li>같은 이름의 파일을 다시 올리면 기존 파일을 덮어씁니다.</li>
           <li>업로드 후 약 2-3분 뒤 대시보드에 반영됩니다.</li>

@@ -5,6 +5,10 @@
  * 사건 배경:
  *   - 2026-06: 카테고리 prefix 가 없는 raw export(모든 카테고리가 섞인 파일)가
  *     업로드돼 모든 카테고리 토글에서 매출이 중복 집계된 사고가 발생.
+ *
+ * 카테고리 코드 면제 조건:
+ *   - 일자별 단일 파일(시작-종료 날짜 차이 ≤ 3일)은 카테고리 prefix 없어도 통과.
+ *     모든 카테고리가 섞여 있어도 행 단위 categoryCode 로 정확히 분리됨.
  */
 export interface ValidationError {
   code:
@@ -26,6 +30,21 @@ const TRUNCATION_SIZE_BYTES = 11_500_000;
 export interface SizeWarning {
   code: "possibly-truncated";
   message: string;
+}
+
+/**
+ * 일자별 단일 파일 패턴 — 시작/종료 날짜 차이 ≤ 3일.
+ * 일~월요일 묶음(주말 매출) 같은 짧은 구간을 허용하기 위해 3일까지 통과.
+ */
+function isShortRangeFilename(name: string): boolean {
+  const m = name.match(
+    /GMV_RAWDATA_(\d{4})-(\d{2})-(\d{2})_(\d{4})-(\d{2})-(\d{2})\.xlsx?$/i,
+  );
+  if (!m) return false;
+  const start = Date.UTC(+m[1], +m[2] - 1, +m[3]);
+  const end = Date.UTC(+m[4], +m[5] - 1, +m[6]);
+  const diffDays = (end - start) / 86_400_000;
+  return diffDays >= 0 && diffDays <= 3;
 }
 
 export function checkFileSizeWarning(size: number): SizeWarning | null {
@@ -74,12 +93,13 @@ export function validateUploadFilename(name: string): ValidationError | null {
       message: "GMV 원본 파일이 아닙니다. 파일명에 'GMV_RAWDATA' 가 있어야 합니다.",
     };
   }
-  // 카테고리 코드(네 자리) 필수
-  if (!/\(\d{4}\)/.test(name)) {
+  // 카테고리 코드(네 자리) 필수 — 단, 일자별 단일 파일(≤3일)이면 면제.
+  // 모든 카테고리가 섞여 있어도 행 단위 categoryCode 로 자동 분리되므로 안전.
+  if (!/\(\d{4}\)/.test(name) && !isShortRangeFilename(name)) {
     return {
       code: "no-category-code",
       message:
-        "파일명에 카테고리 코드(예: (1501))가 없습니다. 카테고리 prefix 없이 전체 raw export 를 올리면 모든 카테고리 매출이 중복 집계됩니다.",
+        "파일명에 카테고리 코드(예: (1501))가 없습니다. 카테고리 prefix 없는 파일은 일자별 단일 파일(시작-종료 ≤ 3일)일 때만 허용됩니다.",
     };
   }
   return null;
