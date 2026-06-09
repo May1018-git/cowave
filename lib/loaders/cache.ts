@@ -17,10 +17,12 @@ import type { FileSystemLoadResult } from "./file-system";
  * 스타트마다 첫 요청이 매우 느리거나 타임아웃났다. 빌드 시 한 번 파싱해
  * JSON 으로 저장해두면 런타임은 JSON 만 읽어 빠르게 끝난다.
  *
- * 저장 포맷(v2)은 용량 최적화를 위해 컬럼/인덱스 압축을 쓴다.
+ * 저장 포맷(v4)은 용량 최적화 + 증분 빌드 지원.
  *  - sales 를 객체 배열이 아닌 튜플 배열로 (반복 키 제거)
  *  - 날짜는 distinct 사전 + 인덱스, productId 는 products 인덱스로 치환
  *  - Sale.id 는 저장하지 않고 로드 시 재생성 (집계에 안 쓰임)
+ *  - manifest 각 항목에 saleStart/saleEnd 를 두어 파일별 sales 범위 추적
+ *    → 다음 빌드에서 변경 없는 파일은 그 슬라이스 그대로 재사용 (증분)
  * 덕분에 서버리스 함수 250MB 한도 안에 넉넉히 들어간다.
  *
  * 무효화: GMV 원천 파일들의 (이름·크기) 매니페스트를 캐시에 함께 저장하고,
@@ -28,15 +30,18 @@ import type { FileSystemLoadResult } from "./file-system";
  * (런타임 번들에는 원본 .xls 가 없어 매니페스트가 비는데, 이때는 캐시를
  * 그대로 신뢰한다 — 배포 시점에 올바른 데이터로 만들어졌기 때문)
  */
-const CACHE_VERSION = 3;
+const CACHE_VERSION = 4;
 const SITE_FOLDERS = ["에누리"];
 
 export interface FileMeta {
   name: string;
   size: number;
+  /** 캐시 내 sales 배열에서 이 파일이 차지하는 [시작, 끝) 인덱스. 증분 빌드용. */
+  saleStart?: number;
+  saleEnd?: number;
 }
 
-interface CacheFileV3 {
+interface CacheFileV4 {
   version: number;
   manifest: FileMeta[];
   products: Product[];
@@ -86,7 +91,7 @@ export function readCache(dataDir: string): DecodedCache | null {
   const p = cachePath(dataDir);
   if (!existsSync(p)) return null;
   try {
-    const obj = JSON.parse(readFileSync(p, "utf8")) as CacheFileV3;
+    const obj = JSON.parse(readFileSync(p, "utf8")) as CacheFileV4;
     if (
       obj.version !== CACHE_VERSION ||
       !Array.isArray(obj.sales) ||
@@ -164,7 +169,7 @@ export function writeCache(
     });
 
     mkdirSync(dirname(p), { recursive: true });
-    const payload: CacheFileV3 = {
+    const payload: CacheFileV4 = {
       version: CACHE_VERSION,
       manifest,
       products: result.products,
