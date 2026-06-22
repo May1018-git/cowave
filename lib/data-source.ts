@@ -433,12 +433,12 @@ export function getCategoryBreakdown(query: BaseQuery): {
   grossAmount: number;
 }[] {
   const sales = filterSales(query);
-  const productsById = getProductsById();
   const map = new Map<string, { name: string; gross: number }>();
   for (const s of sales) {
-    const product = productsById.get(s.productId);
-    if (!product) continue;
-    const top = getTopCategory(product.categoryCode);
+    // 카테고리 분류는 거래 단위 categoryCode 기준 — 같은 product 가 여러
+    // 카테고리에 cross-listing 된 경우 product.categoryCode 는 첫 등장 카테고리
+    // 하나만 가리켜서 다른 카테고리 매출이 그쪽으로 잘못 분류됨.
+    const top = getTopCategory(s.categoryCode);
     if (!top) continue;
     const acc = map.get(top.code) ?? { name: top.name, gross: 0 };
     acc.gross += s.grossAmount;
@@ -464,12 +464,11 @@ export interface SubCategoryRow {
 
 function aggregateSubCategory(query: BaseQuery): Map<string, { name: string; gross: number; orders: number }> {
   const sales = filterSales(query);
-  const productsById = getProductsById();
   const map = new Map<string, { name: string; gross: number; orders: number }>();
   const OTHER_KEY = "__other__";
   for (const s of sales) {
-    const product = productsById.get(s.productId);
-    const sub = product ? getSubCategory(product.categoryCode) : undefined;
+    // 소분류 분류는 거래 단위 categoryCode 기준 (cross-listing 안전).
+    const sub = getSubCategory(s.categoryCode);
     const key = sub?.code ?? OTHER_KEY;
     const name = sub?.name ?? "기타";
     const acc = map.get(key) ?? { name, gross: 0, orders: 0 };
@@ -554,12 +553,10 @@ export interface MallCategoryCell {
 
 export function getMallCategoryMatrix(query: BaseQuery): MallCategoryCell[] {
   const sales = filterSales(query);
-  const productsById = getProductsById();
   const map = new Map<string, MallCategoryCell>();
   for (const s of sales) {
-    const product = productsById.get(s.productId);
-    if (!product) continue;
-    const top = getTopCategory(product.categoryCode);
+    // cross-listing 안전 — 거래 단위 categoryCode 기준.
+    const top = getTopCategory(s.categoryCode);
     if (!top) continue;
     const key = `${s.mallId}|${top.code}`;
     const cell = map.get(key) ?? {
