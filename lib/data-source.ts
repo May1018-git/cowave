@@ -372,11 +372,12 @@ export function getMallBreakdown(
 }
 
 export function getTopProducts(
-  query: BaseQuery & { limit?: number; categoryPrefix?: string; mallId?: string; manufacturer?: string },
+  query: BaseQuery & { limit?: number; categoryPrefix?: string; mallId?: string; manufacturer?: string; nameContains?: string },
 ): ProductRankRow[] {
   const limit = query.limit ?? 10;
   const mallId = query.mallId?.trim() || "";
   const manufacturer = query.manufacturer?.trim() || "";
+  const nameQuery = query.nameContains?.trim().toLowerCase() || "";
   const productsById = getProductsById();
 
   const rank = (q: BaseQuery) => {
@@ -387,6 +388,9 @@ export function getTopProducts(
       const product = productsById.get(s.productId);
       if (manufacturer) {
         if (!product || (product.manufacturer ?? "").trim() !== manufacturer) continue;
+      }
+      if (nameQuery) {
+        if (!product || !product.name.toLowerCase().includes(nameQuery)) continue;
       }
       const acc = map.get(s.productId) ?? { gross: 0, qty: 0, commission: 0 };
       acc.gross += s.grossAmount;
