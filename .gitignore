@@ -41,3 +41,4 @@ data/sample/**/*.xlsx
 
 # parsed-data cache (regenerated at build time)
 data/.cache/
+data/에누리/.cache/
