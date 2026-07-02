@@ -1,5 +1,5 @@
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
-import { cn, formatPercent } from "@/lib/utils";
+import { cn, formatKRW, formatPercent } from "@/lib/utils";
 import type { GrowthMetric } from "@/lib/types";
 
 interface KpiCardProps {
@@ -8,6 +8,11 @@ interface KpiCardProps {
   subValue?: React.ReactNode;
   yoy?: GrowthMetric;
   mom?: GrowthMetric;
+}
+
+function formatDelta(delta: number): string {
+  const sign = delta >= 0 ? "+" : "-";
+  return `${sign}${formatKRW(Math.abs(delta), { compact: true })}원`;
 }
 
 function DeltaBadge({ label, metric }: { label: string; metric: GrowthMetric }) {
@@ -27,6 +32,7 @@ function DeltaBadge({ label, metric }: { label: string; metric: GrowthMetric }) 
       <Icon size={10} />
       <span className="text-gray-500">{label}</span>
       <span>{formatPercent(pct)}</span>
+      <span className="opacity-70">({formatDelta(metric.delta)})</span>
     </span>
   );
 }
