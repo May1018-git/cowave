@@ -8,7 +8,12 @@ interface ManufacturerTableProps {
   qs?: string;
 }
 
-function GrowthCell({ percent }: { percent: number | null }) {
+function formatDelta(delta: number): string {
+  const sign = delta >= 0 ? "+" : "-";
+  return `${sign}${formatKRW(Math.abs(delta), { compact: true })}원`;
+}
+
+function GrowthCell({ percent, delta }: { percent: number | null; delta: number }) {
   const p = percent;
   const positive = (p ?? 0) > 0.05;
   const negative = (p ?? 0) < -0.05;
@@ -16,14 +21,17 @@ function GrowthCell({ percent }: { percent: number | null }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-0.5 tabular-nums text-xs font-medium",
+        "inline-flex flex-col items-end gap-0 tabular-nums text-xs font-medium",
         positive && "text-emerald-700",
         negative && "text-red-700",
         !positive && !negative && "text-gray-500",
       )}
     >
-      <Icon size={11} />
-      {formatPercent(p)}
+      <span className="inline-flex items-center gap-0.5">
+        <Icon size={11} />
+        {formatPercent(p)}
+      </span>
+      <span className="text-[10px] opacity-70">{formatDelta(delta)}</span>
     </span>
   );
 }
@@ -71,10 +79,10 @@ export function ManufacturerTable({ rows, qs }: ManufacturerTableProps) {
               {formatKRW(r.averageOrderValue)}원
             </td>
             <td className="py-2 text-right">
-              <GrowthCell percent={r.growth.yoy.percent} />
+              <GrowthCell percent={r.growth.yoy.percent} delta={r.growth.yoy.delta} />
             </td>
             <td className="py-2 pr-2 text-right">
-              <GrowthCell percent={r.growth.mom.percent} />
+              <GrowthCell percent={r.growth.mom.percent} delta={r.growth.mom.delta} />
             </td>
           </tr>
         ))}

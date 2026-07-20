@@ -7,7 +7,9 @@ import {
   resolveCategoryPrefix,
   resolveRange,
 } from "@/lib/data-source";
-import { formatKRW, formatNumber } from "@/lib/utils";
+import { formatKRW, formatNumber, formatPercent } from "@/lib/utils";
+import { ArrowUp, ArrowDown, Minus } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { getCategoryPath } from "@/lib/category-map";
 import type { SiteFilter } from "@/lib/types";
 
@@ -22,6 +24,33 @@ interface MallDetailPageProps {
     cat2?: string;
     cat3?: string;
   };
+}
+
+function formatDelta(delta: number): string {
+  const sign = delta >= 0 ? "+" : "-";
+  return `${sign}${formatKRW(Math.abs(delta), { compact: true })}원`;
+}
+
+function YoYCell({ percent, delta }: { percent: number | null; delta: number }) {
+  const positive = (percent ?? 0) > 0.05;
+  const negative = (percent ?? 0) < -0.05;
+  const Icon = positive ? ArrowUp : negative ? ArrowDown : Minus;
+  return (
+    <span
+      className={cn(
+        "inline-flex flex-col items-end tabular-nums text-xs font-medium",
+        positive && "text-emerald-700",
+        negative && "text-red-700",
+        !positive && !negative && "text-gray-500",
+      )}
+    >
+      <span className="inline-flex items-center gap-0.5">
+        <Icon size={11} />
+        {formatPercent(percent)}
+      </span>
+      <span className="text-[10px] opacity-70">{formatDelta(delta)}</span>
+    </span>
+  );
 }
 
 export default function MallDetailPage({
@@ -101,6 +130,7 @@ export default function MallDetailPage({
               <th className="py-2 font-medium">카테고리</th>
               <th className="py-2 font-medium">모델번호/상품코드</th>
               <th className="py-2 text-right font-medium">매출액</th>
+              <th className="py-2 text-right font-medium">YoY</th>
               <th className="py-2 pr-2 text-right font-medium">수량</th>
             </tr>
           </thead>
@@ -138,6 +168,9 @@ export default function MallDetailPage({
                 <td className="py-2 text-right tabular-nums">
                   {formatKRW(r.grossAmount)}
                 </td>
+                <td className="py-2 text-right">
+                  <YoYCell percent={r.growth.yoy.percent} delta={r.growth.yoy.delta} />
+                </td>
                 <td className="py-2 pr-2 text-right tabular-nums text-gray-600">
                   {formatNumber(r.quantity)}
                 </td>
@@ -145,7 +178,7 @@ export default function MallDetailPage({
             ))}
             {products.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-sm text-gray-400">
+                <td colSpan={7} className="py-8 text-center text-sm text-gray-400">
                   데이터가 없습니다
                 </td>
               </tr>
