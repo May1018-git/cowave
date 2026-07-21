@@ -152,6 +152,9 @@ function ComparisonCard({
         <div className="mt-1 text-2xl font-semibold tracking-tight">
           {formatKRW(current, { compact: true })}
         </div>
+        <div className="mt-0.5 tabular-nums text-[11px] text-gray-400">
+          {formatKRW(current)}원
+        </div>
       </div>
     );
   }
@@ -237,8 +240,14 @@ function AchievementCard({
         />
       </div>
       <div className="mt-1.5 text-xs text-gray-500">
-        목표 {formatKRW(target, { compact: true })} · 실적{" "}
-        {formatKRW(actual, { compact: true })}
+        목표{" "}
+        <span
+          title={`${formatKRW(target)}원`}
+          className="cursor-help underline decoration-dotted underline-offset-2"
+        >
+          {formatKRW(target, { compact: true })}
+        </span>{" "}
+        · 실적 {formatKRW(actual, { compact: true })}
       </div>
     </div>
   );
