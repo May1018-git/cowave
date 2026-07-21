@@ -107,11 +107,25 @@ export default function Home({ searchParams }: HomeProps) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label={usingCustomRange ? "선택 기간 매출" : "이번 달 총매출"}
-          value={formatKRW(kpi.grossAmount, { compact: true })}
+          value={
+            <span
+              title={`${formatKRW(kpi.grossAmount)}원`}
+              className="cursor-help"
+            >
+              {formatKRW(kpi.grossAmount, { compact: true })}
+            </span>
+          }
           subValue={
             achievement ? (
               <span>
-                월목표 {formatKRW(achievement.target, { compact: true })} · 달성{" "}
+                월목표{" "}
+                <span
+                  title={`${formatKRW(achievement.target)}원`}
+                  className="cursor-help underline decoration-dotted underline-offset-2"
+                >
+                  {formatKRW(achievement.target, { compact: true })}
+                </span>{" "}
+                · 달성{" "}
                 <span
                   className={
                     achievement.rate >= 1

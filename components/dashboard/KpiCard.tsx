@@ -4,7 +4,7 @@ import type { GrowthMetric } from "@/lib/types";
 
 interface KpiCardProps {
   label: string;
-  value: string;
+  value: React.ReactNode;
   subValue?: React.ReactNode;
   yoy?: GrowthMetric;
   mom?: GrowthMetric;
