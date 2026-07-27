@@ -56,13 +56,17 @@ const 억 = 100_000_000;
 const 백만 = 1_000_000;
 
 function fmtAmt(n: number): string {
-  if (Math.abs(n) >= 억) return `${(n / 억).toFixed(1)}억`;
+  const a = Math.abs(n);
+  if (a >= 억) return `${(n / 억).toFixed(1)}억`;
+  // 1백만 미만은 백만 단위로 반올림하면 전부 "0백만" 이 되어 버린다.
+  if (a < 백만) return `${Math.round(n / 10_000).toLocaleString("ko-KR")}만`;
   return `${Math.round(n / 백만)}백만`;
 }
 function fmtDelta(n: number): string {
   const s = n >= 0 ? "+" : "-";
   const a = Math.abs(n);
   if (a >= 억) return `${s}${(a / 억).toFixed(1)}억`;
+  if (a < 백만) return `${s}${Math.round(a / 10_000).toLocaleString("ko-KR")}만`;
   return `${s}${Math.round(a / 백만)}백만`;
 }
 function fmtPct(p: number | null): string {
@@ -120,9 +124,13 @@ for (const cat of CATS) {
   const yoyMalls = getMallBreakdown(yq);
   const yoyMallAmt = new Map(yoyMalls.map((m) => [m.mallId, m.grossAmount]));
 
-  // 전년에 매출이 있었는데 올해 0인 몰 (채널 단절)
+  // 전년에 매출이 있었는데 올해 0인 몰 (채널 단절).
+  // 전년 1백만 미만은 노이즈라 제외 — 보고할 만한 채널만 남긴다.
   const deadMalls = yoyMalls
-    .filter((m) => m.grossAmount > 0 && !malls.some((c) => c.mallId === m.mallId))
+    .filter(
+      (m) =>
+        m.grossAmount >= 백만 && !malls.some((c) => c.mallId === m.mallId),
+    )
     .sort((a, b) => b.grossAmount - a.grossAmount);
 
   console.log(`\n### 쇼핑몰`);
@@ -152,14 +160,15 @@ for (const cat of CATS) {
   }
 
   // ---- 상품 레벨 이슈: 카테고리 전체 급증/급감 ----
-  const allProducts = getTopProducts({ ...q, limit: 200 });
-  const movers = allProducts.filter((p) => Math.abs(p.growth.yoy.delta) >= 3 * 백만);
+  // 카테고리 규모가 작으면 절대 임계값(3백만)에 걸리는 상품이 1~2개뿐이라
+  // 이슈 코멘트 근거가 부족해진다. 차액 절대값 상위 5개를 그냥 뽑는다.
+  const allProducts = getTopProducts({ ...q, limit: 300 });
 
-  const gainers = movers
+  const gainers = allProducts
     .filter((p) => p.growth.yoy.delta > 0)
     .sort((a, b) => b.growth.yoy.delta - a.growth.yoy.delta)
     .slice(0, 5);
-  const losers = movers
+  const losers = allProducts
     .filter((p) => p.growth.yoy.delta < 0)
     .sort((a, b) => a.growth.yoy.delta - b.growth.yoy.delta)
     .slice(0, 5);
@@ -184,10 +193,10 @@ for (const cat of CATS) {
   const yoyProducts = getTopProducts({ ...yq, limit: 200 });
   const curIds = new Set(allProducts.map((p) => p.product.id));
   const gone = yoyProducts
-    .filter((p) => !curIds.has(p.product.id) && p.grossAmount >= 3 * 백만)
+    .filter((p) => !curIds.has(p.product.id) && p.grossAmount >= 백만)
     .slice(0, 5);
   if (gone.length > 0) {
-    console.log(`\n### 상품 이슈 — 올해 매출 소멸 (전년 3백만↑)`);
+    console.log(`\n### 상품 이슈 — 올해 매출 소멸 (전년 1백만↑)`);
     for (const p of gone) {
       console.log(
         `- ${p.product.name}${p.product.manufacturer ? ` [${p.product.manufacturer}]` : ""}: 전년 ${fmtAmt(p.grossAmount)} → 0`,
