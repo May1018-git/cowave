@@ -7,7 +7,8 @@ const nextConfig = {
     // 직접 읽으므로 명시적으로 포함시킨다.
     outputFileTracingIncludes: {
       "/**": [
-        "./data/.cache/parsed.json",
+        "./data/.cache/parsed.meta.json",
+        "./data/.cache/parsed.bin",
         "./data/에누리/*타겟*",
         "./data/에누리/*target*",
         "./data/에누리/*목표*",

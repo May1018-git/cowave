@@ -1,5 +1,5 @@
 /**
- * 빌드 시 1회 실행: GMV 엑셀을 파싱해 JSON 캐시(data/.cache/parsed.json)로 저장.
+ * 빌드 시 1회 실행: GMV 엑셀을 파싱해 캐시(data/.cache/parsed.meta.json + parsed.bin)로 저장.
  * 런타임(특히 Vercel 콜드 스타트)은 무거운 엑셀 대신 이 JSON 만 읽어 빠르게 뜬다.
  *
  * 증분 빌드:
@@ -9,8 +9,8 @@
  *
  * Vercel 빌드 캐시 보존:
  *   - Vercel 은 빌드 사이에 `.next/cache/` 디렉토리를 자동 보존한다.
- *     `data/.cache/parsed.json` 자체는 보존되지 않으므로,
- *     `.next/cache/data-incremental/parsed.json` 에도 사본을 두어 다음 빌드에서
+ *     `data/.cache/` 자체는 보존되지 않으므로,
+ *     `.next/cache/data-incremental/` 에도 사본을 두어 다음 빌드에서
  *     증분 베이스로 활용한다.
  *
  * DATA_DIR 이 없거나 GMV 파일이 없으면 조용히 건너뛴다(데모/CI 안전).
@@ -21,8 +21,9 @@ import {
   mkdirSync,
   readFileSync,
 } from "node:fs";
-import { dirname, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import {
+  cacheFiles,
   cacheManifest,
   readCache,
   writeCache,
@@ -33,16 +34,20 @@ import type { Product, Sale, SiteId } from "../lib/types";
 
 const dataDir = process.env.DATA_DIR?.trim() || "./data";
 const SITE_BY_FOLDER: Record<string, SiteId> = { 에누리: "enuri" };
-const RUNTIME_CACHE = join(dataDir, ".cache", "parsed.json");
-const BUILD_CACHE = ".next/cache/data-incremental/parsed.json";
+// 캐시는 파일 두 개(parsed.meta.json + parsed.bin)로 이루어져 항상 짝으로 옮긴다.
+const RUNTIME_CACHE_FILES = cacheFiles(dataDir);
+const BUILD_CACHE_DIR = ".next/cache/data-incremental";
+const buildCachePath = (p: string) => join(BUILD_CACHE_DIR, basename(p));
 
 // 1) 직전 빌드의 캐시 복원 (Vercel build cache → 런타임 위치)
-//    `data/.cache/parsed.json` 이 비어있고, `.next/cache/data-incremental/parsed.json`
-//    이 살아있으면 그걸 가져와 증분 베이스로 사용한다.
-if (!existsSync(RUNTIME_CACHE) && existsSync(BUILD_CACHE)) {
-  mkdirSync(dirname(RUNTIME_CACHE), { recursive: true });
-  copyFileSync(BUILD_CACHE, RUNTIME_CACHE);
-  console.log(`[cache] Vercel 빌드 캐시에서 직전 캐시 복원 (${BUILD_CACHE} → ${RUNTIME_CACHE})`);
+//    런타임 캐시가 비어있고 빌드 캐시가 살아있으면 가져와 증분 베이스로 쓴다.
+if (
+  RUNTIME_CACHE_FILES.some((p) => !existsSync(p)) &&
+  RUNTIME_CACHE_FILES.every((p) => existsSync(buildCachePath(p)))
+) {
+  mkdirSync(dirname(RUNTIME_CACHE_FILES[0]), { recursive: true });
+  for (const p of RUNTIME_CACHE_FILES) copyFileSync(buildCachePath(p), p);
+  console.log(`[cache] Vercel 빌드 캐시에서 직전 캐시 복원 (${BUILD_CACHE_DIR} → ${dirname(RUNTIME_CACHE_FILES[0])})`);
 }
 
 const newManifest = cacheManifest(dataDir);
@@ -137,9 +142,9 @@ console.log(
 // 2) 결과를 Vercel 빌드 캐시 위치에도 사본 저장 (다음 빌드의 증분 베이스용)
 if (ok) {
   try {
-    mkdirSync(dirname(BUILD_CACHE), { recursive: true });
-    copyFileSync(RUNTIME_CACHE, BUILD_CACHE);
-    console.log(`[cache] Vercel 빌드 캐시에도 사본 저장 (${BUILD_CACHE})`);
+    mkdirSync(BUILD_CACHE_DIR, { recursive: true });
+    for (const p of RUNTIME_CACHE_FILES) copyFileSync(p, buildCachePath(p));
+    console.log(`[cache] Vercel 빌드 캐시에도 사본 저장 (${BUILD_CACHE_DIR})`);
   } catch (e) {
     console.warn(`[cache] 빌드 캐시 사본 저장 실패 (무시): ${(e as Error).message}`);
   }

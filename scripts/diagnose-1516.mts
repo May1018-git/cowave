@@ -11,11 +11,10 @@
  *
  * 실행: npx tsx scripts/diagnose-1516.mts
  */
-import { readFileSync } from "node:fs";
+import { readCache } from "../lib/loaders/cache";
 import { getSubCategory } from "../lib/category-map";
 import { getMallName } from "../lib/mall-map";
 
-const CACHE = "./data/.cache/parsed.json";
 const CAT = "1516";
 const COUPANG = "7861";
 
@@ -27,15 +26,12 @@ const TO = "2026-07-22";
 const YOY_FROM = "2025-05-01";
 const YOY_TO = "2025-07-22";
 
-interface CacheFile {
-  products: { id: string; name: string; manufacturer?: string }[];
-  dates: string[];
-  cats: string[];
-  sales: [number, number, number, string, number, number, number, number][];
+const cache = readCache(process.env.DATA_DIR?.trim() || "./data");
+if (!cache) {
+  console.error("캐시를 읽지 못했습니다. 먼저 `npx tsx scripts/build-cache.mts` 를 실행하세요.");
+  process.exit(1);
 }
-
-const raw = JSON.parse(readFileSync(CACHE, "utf8")) as CacheFile;
-const { dates, products, cats, sales: rawSales } = raw;
+const productById = new Map(cache.products.map((p) => [p.id, p]));
 
 type Row = {
   date: string;
@@ -49,22 +45,22 @@ type Row = {
 };
 
 const rows: Row[] = [];
-for (const r of rawSales) {
-  const code = cats?.[r[7]] ?? "";
+for (const s of cache.sales) {
+  const code = s.categoryCode;
   if (!code.startsWith(CAT)) continue;
-  const date = dates[r[0]];
+  const date = s.date;
   const inCur = date >= FROM && date <= TO;
   const inYoy = date >= YOY_FROM && date <= YOY_TO;
   if (!inCur && !inYoy) continue;
-  const p = products[r[2]];
+  const p = productById.get(s.productId);
   rows.push({
     date,
-    pid: p.id,
-    name: p.name,
-    mfr: p.manufacturer ?? "",
-    mall: r[3],
-    amt: r[5],
-    qty: r[4],
+    pid: s.productId,
+    name: p?.name ?? s.productId,
+    mfr: p?.manufacturer ?? "",
+    mall: s.mallId,
+    amt: s.grossAmount,
+    qty: s.quantity,
     code,
   });
 }

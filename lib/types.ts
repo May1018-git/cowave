@@ -36,7 +36,8 @@ export interface Product {
 }
 
 export interface Sale {
-  id: string;
+  /** 목업 데이터에만 있다. 집계에 쓰이지 않아 실데이터 캐시에는 저장하지 않는다. */
+  id?: string;
   date: string;
   siteId: SiteId;
   productId: string;

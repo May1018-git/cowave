@@ -24,12 +24,12 @@ const DATA_DIR = process.env.DATA_DIR?.trim() || "./data";
 
 /** 캐시에서 가장 최신 매출 일자를 찾는다. 없으면 오늘 기준으로 폴백. */
 function latestDataDate(): string {
-  const cachePath = join(DATA_DIR, ".cache", "parsed.json");
+  const cachePath = join(DATA_DIR, ".cache", "parsed.meta.json");
   if (existsSync(cachePath)) {
-    const raw = JSON.parse(readFileSync(cachePath, "utf8")) as {
+    const meta = JSON.parse(readFileSync(cachePath, "utf8")) as {
       dates?: string[];
     };
-    const dates = raw.dates ?? [];
+    const dates = meta.dates ?? [];
     if (dates.length > 0) return dates.slice().sort().at(-1)!;
   }
   return new Date().toISOString().slice(0, 10);
