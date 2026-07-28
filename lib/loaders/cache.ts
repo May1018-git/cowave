@@ -17,20 +17,27 @@ import type { FileSystemLoadResult } from "./file-system";
  * 스타트마다 첫 요청이 매우 느리거나 타임아웃났다. 빌드 시 한 번 파싱해
  * JSON 으로 저장해두면 런타임은 JSON 만 읽어 빠르게 끝난다.
  *
- * 저장 포맷(v4)은 용량 최적화 + 증분 빌드 지원.
- *  - sales 를 객체 배열이 아닌 튜플 배열로 (반복 키 제거)
- *  - 날짜는 distinct 사전 + 인덱스, productId 는 products 인덱스로 치환
+ * 저장 포맷(v5)은 용량 최적화 + 증분 빌드 지원.
+ *  - sales / products 를 객체 배열이 아닌 튜플 배열로 (반복 키 제거)
+ *  - 날짜·사이트·쇼핑몰·카테고리는 distinct 사전 + 인덱스로 치환
+ *  - productId 는 products 인덱스로 치환
  *  - Sale.id 는 저장하지 않고 로드 시 재생성 (집계에 안 쓰임)
  *  - manifest 각 항목에 saleStart/saleEnd 를 두어 파일별 sales 범위 추적
  *    → 다음 빌드에서 변경 없는 파일은 그 슬라이스 그대로 재사용 (증분)
  * 덕분에 서버리스 함수 250MB 한도 안에 넉넉히 들어간다.
+ *
+ * v5 에서 저장을 그만둔 것들 (모두 무손실 — 화면 출력은 그대로다):
+ *  - Sale.commission — 실제 수수료율 데이터가 없어 임시 상수로 계산되던 값이고
+ *    어느 화면에도 표시되지 않는다. 행마다 실려 캐시의 약 13% 를 차지했다.
+ *  - Product.basePrice — 실데이터 경로에서 항상 0 (목업 전용 필드).
+ *  - Product.modelNumber — id 가 `M-{모델번호}` 라 그대로 유도된다.
  *
  * 무효화: GMV 원천 파일들의 (이름·크기) 매니페스트를 캐시에 함께 저장하고,
  * 로드 시 현재 파일들과 비교해 다르면 캐시를 무시하고 재파싱한다.
  * (런타임 번들에는 원본 .xls 가 없어 매니페스트가 비는데, 이때는 캐시를
  * 그대로 신뢰한다 — 배포 시점에 올바른 데이터로 만들어졌기 때문)
  */
-const CACHE_VERSION = 4;
+const CACHE_VERSION = 5;
 const SITE_FOLDERS = ["에누리"];
 
 export interface FileMeta {
@@ -41,15 +48,26 @@ export interface FileMeta {
   saleEnd?: number;
 }
 
-interface CacheFileV4 {
+/** [id, name, categoryCode, manufacturer, productCode] */
+type ProductTuple = [string, string, string, string, string];
+
+/** [dateIdx, siteIdx, productIdx, mallIdx, quantity, grossAmount, catIdx] */
+type SaleTuple = [number, number, number, number, number, number, number];
+
+interface CacheFileV5 {
   version: number;
   manifest: FileMeta[];
-  products: Product[];
+  products: ProductTuple[];
   dates: string[];
   sites: SiteId[];
+  malls: string[];
   cats: string[];
-  // [dateIdx, siteIdx, productIdx, mallId, quantity, grossAmount, commission, catIdx]
-  sales: [number, number, number, string, number, number, number, number][];
+  sales: SaleTuple[];
+}
+
+/** id 가 `M-{모델번호}` 면 모델번호를, `C-{상품코드}` 면 빈 문자열을 준다. */
+function modelNumberFromId(id: string): string {
+  return id.startsWith("M-") ? id.slice(2) : "";
 }
 
 export interface DecodedCache {
@@ -91,28 +109,38 @@ export function readCache(dataDir: string): DecodedCache | null {
   const p = cachePath(dataDir);
   if (!existsSync(p)) return null;
   try {
-    const obj = JSON.parse(readFileSync(p, "utf8")) as CacheFileV4;
+    const obj = JSON.parse(readFileSync(p, "utf8")) as CacheFileV5;
     if (
       obj.version !== CACHE_VERSION ||
       !Array.isArray(obj.sales) ||
       !Array.isArray(obj.products) ||
       !Array.isArray(obj.dates) ||
       !Array.isArray(obj.sites) ||
+      !Array.isArray(obj.malls) ||
       !Array.isArray(obj.manifest)
     ) {
       return null;
     }
-    const { dates, sites, products, cats } = obj;
+    const { dates, sites, malls, cats } = obj;
+    const products: Product[] = obj.products.map((t) => ({
+      id: t[0],
+      name: t[1],
+      categoryCode: t[2],
+      manufacturer: t[3],
+      productCode: t[4],
+      modelNumber: modelNumberFromId(t[0]),
+      basePrice: 0,
+    }));
     const sales: Sale[] = obj.sales.map((r, i) => ({
       id: `s${i}`,
       date: dates[r[0]],
       siteId: sites[r[1]],
       productId: products[r[2]].id,
-      mallId: r[3],
+      mallId: malls[r[3]],
       quantity: r[4],
       grossAmount: r[5],
-      commission: r[6],
-      categoryCode: cats?.[r[7]] ?? "",
+      commission: 0,
+      categoryCode: cats?.[r[6]] ?? "",
     }));
     return { manifest: obj.manifest, sales, products };
   } catch {
@@ -131,6 +159,8 @@ export function writeCache(
     const dateIdx = new Map<string, number>();
     const sites: SiteId[] = [];
     const siteIdx = new Map<SiteId, number>();
+    const malls: string[] = [];
+    const mallIdx = new Map<string, number>();
     const cats: string[] = [];
     const catIdx = new Map<string, number>();
     const prodIdx = new Map<string, number>();
@@ -149,6 +179,12 @@ export function writeCache(
         sites.push(s.siteId);
         siteIdx.set(s.siteId, si);
       }
+      let mi = mallIdx.get(s.mallId);
+      if (mi === undefined) {
+        mi = malls.length;
+        malls.push(s.mallId);
+        mallIdx.set(s.mallId, mi);
+      }
       let ci = catIdx.get(s.categoryCode);
       if (ci === undefined) {
         ci = cats.length;
@@ -156,25 +192,25 @@ export function writeCache(
         catIdx.set(s.categoryCode, ci);
       }
       const pi = prodIdx.get(s.productId) ?? -1;
-      return [di, si, pi, s.mallId, s.quantity, s.grossAmount, s.commission, ci] as [
-        number,
-        number,
-        number,
-        string,
-        number,
-        number,
-        number,
-        number,
-      ];
+      return [di, si, pi, mi, s.quantity, s.grossAmount, ci] as SaleTuple;
     });
 
+    const products: ProductTuple[] = result.products.map((prod) => [
+      prod.id,
+      prod.name,
+      prod.categoryCode,
+      prod.manufacturer ?? "",
+      prod.productCode ?? "",
+    ]);
+
     mkdirSync(dirname(p), { recursive: true });
-    const payload: CacheFileV4 = {
+    const payload: CacheFileV5 = {
       version: CACHE_VERSION,
       manifest,
-      products: result.products,
+      products,
       dates,
       sites,
+      malls,
       cats,
       sales,
     };
