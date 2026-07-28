@@ -400,7 +400,10 @@ export function getTopProducts(
     }
     return [...map.entries()]
       .map(([productId, agg]) => ({ productId, ...agg }))
-      .sort((a, b) => b.gross - a.gross);
+      // 매출 동점일 때 productId 로 한 번 더 가른다. 그러지 않으면 순위가
+      // Map 삽입 순서(=파일 파싱 순서)에 좌우돼, 같은 데이터라도 실행 방식에
+      // 따라 노출되는 상품이 바뀐다.
+      .sort((a, b) => b.gross - a.gross || a.productId.localeCompare(b.productId));
   };
 
   const current = rank(query);
