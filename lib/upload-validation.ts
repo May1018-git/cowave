@@ -7,8 +7,10 @@
  *     업로드돼 모든 카테고리 토글에서 매출이 중복 집계된 사고가 발생.
  *
  * 카테고리 코드 면제 조건:
- *   - 일자별 단일 파일(시작-종료 날짜 차이 ≤ 3일)은 카테고리 prefix 없어도 통과.
+ *   - 일자별 파일(수집 기간 7일 이내)은 카테고리 prefix 없어도 통과.
  *     모든 카테고리가 섞여 있어도 행 단위 categoryCode 로 정확히 분리됨.
+ *   - 2026-08: 평일/주말 구분 없이 한 주치를 한 번에 올릴 수 있도록
+ *     3일 → 7일로 연장.
  */
 export interface ValidationError {
   code:
@@ -33,8 +35,18 @@ export interface SizeWarning {
 }
 
 /**
- * 일자별 단일 파일 패턴 — 시작/종료 날짜 차이 ≤ 3일.
- * 일~월요일 묶음(주말 매출) 같은 짧은 구간을 허용하기 위해 3일까지 통과.
+ * 카테고리 prefix 없이 허용되는 최대 수집 일수(시작·종료일 포함).
+ * 평일/주말 구분 없이 한 주치까지 한 파일로 올릴 수 있게 7일로 둔다.
+ */
+const MAX_SPAN_DAYS = 7;
+
+/**
+ * 일자별 파일 패턴 — 파일이 담는 기간이 MAX_SPAN_DAYS 이내.
+ *
+ * 이 면제는 길이와 무관하게 안전하다. 모든 카테고리가 섞여 있어도 행 단위
+ * categoryCode 로 분리되기 때문이다. 길이를 제한하는 건 에누리 export 의
+ * 20,000행 한도 때문으로, 기간이 길수록 조용히 잘릴 위험이 커진다.
+ * (잘림 자체는 checkFileSizeWarning 이 파일 크기로 따로 경고한다.)
  */
 function isShortRangeFilename(name: string): boolean {
   const m = name.match(
@@ -43,8 +55,8 @@ function isShortRangeFilename(name: string): boolean {
   if (!m) return false;
   const start = Date.UTC(+m[1], +m[2] - 1, +m[3]);
   const end = Date.UTC(+m[4], +m[5] - 1, +m[6]);
-  const diffDays = (end - start) / 86_400_000;
-  return diffDays >= 0 && diffDays <= 3;
+  const spanDays = (end - start) / 86_400_000 + 1; // 양 끝 포함
+  return spanDays >= 1 && spanDays <= MAX_SPAN_DAYS;
 }
 
 export function checkFileSizeWarning(size: number): SizeWarning | null {
@@ -93,13 +105,12 @@ export function validateUploadFilename(name: string): ValidationError | null {
       message: "GMV 원본 파일이 아닙니다. 파일명에 'GMV_RAWDATA' 가 있어야 합니다.",
     };
   }
-  // 카테고리 코드(네 자리) 필수 — 단, 일자별 단일 파일(≤3일)이면 면제.
+  // 카테고리 코드(네 자리) 필수 — 단, 일자별 파일(7일 이내)이면 면제.
   // 모든 카테고리가 섞여 있어도 행 단위 categoryCode 로 자동 분리되므로 안전.
   if (!/\(\d{4}\)/.test(name) && !isShortRangeFilename(name)) {
     return {
       code: "no-category-code",
-      message:
-        "파일명에 카테고리 코드(예: (1501))가 없습니다. 카테고리 prefix 없는 파일은 일자별 단일 파일(시작-종료 ≤ 3일)일 때만 허용됩니다.",
+      message: `파일명에 카테고리 코드(예: (1501))가 없습니다. 카테고리 prefix 없는 파일은 수집 기간이 ${MAX_SPAN_DAYS}일 이내일 때만 허용됩니다.`,
     };
   }
   return null;
