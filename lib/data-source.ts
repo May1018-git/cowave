@@ -1,4 +1,5 @@
 import {
+  addYears,
   endOfMonth,
   format,
   parseISO,
@@ -503,6 +504,55 @@ export function getSubCategoryBreakdown(query: BaseQuery): SubCategoryRow[] {
       },
     }))
     .sort((a, b) => b.grossAmount - a.grossAmount);
+}
+
+export interface DailyRow {
+  date: string;
+  grossAmount: number;
+  orders: number;
+  quantity: number;
+  averageOrderValue: number;
+  growth: { yoy: GrowthMetric };
+}
+
+function aggregateByDate(
+  sales: Sale[],
+): Map<string, { gross: number; orders: number; qty: number }> {
+  const map = new Map<string, { gross: number; orders: number; qty: number }>();
+  for (const s of sales) {
+    const acc = map.get(s.date) ?? { gross: 0, orders: 0, qty: 0 };
+    acc.gross += s.grossAmount;
+    acc.orders += 1;
+    acc.qty += s.quantity;
+    map.set(s.date, acc);
+  }
+  return map;
+}
+
+/** 날짜순(오름차순) 일자별 매출. */
+export function getDailyBreakdown(query: BaseQuery): DailyRow[] {
+  const current = aggregateByDate(filterSales(query));
+  const yoyPrev = aggregateByDate(
+    filterSales({ ...query, ...previousPeriodYoY(query) }),
+  );
+
+  return [...current.entries()]
+    .map(([date, { gross, orders, qty }]) => {
+      // 전년 동일자: 다른 페이지의 YoY 계산(연 단위 range shift)과 같은 규칙을
+      // 날짜 하나에 적용한다. addYears 가 윤년(2/29)도 안전하게 보정해준다.
+      const yoyDate = format(addYears(parseISO(date), -1), "yyyy-MM-dd");
+      return {
+        date,
+        grossAmount: gross,
+        orders,
+        quantity: qty,
+        averageOrderValue: orders === 0 ? 0 : Math.round(gross / orders),
+        growth: {
+          yoy: computeGrowth(gross, yoyPrev.get(yoyDate)?.gross ?? 0),
+        },
+      };
+    })
+    .sort((a, b) => a.date.localeCompare(b.date));
 }
 
 export interface ManufacturerRow {
