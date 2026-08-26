@@ -40,6 +40,13 @@ export default function Home({ searchParams }: HomeProps) {
   const kpi = getKpis({ siteFilter, ...range, categoryPrefix });
   const growth = getKpiGrowth({ siteFilter, ...range, categoryPrefix });
   const achievement = getAchievement({ siteFilter, ...range, categoryPrefix });
+
+  // 상품 상세로 넘어갈 때 이어붙일 필터.
+  const detailQs = new URLSearchParams();
+  for (const key of ["site", "cat", "cat1", "cat2", "cat3", "from", "to"] as const) {
+    const v = searchParams[key];
+    if (v) detailQs.set(key, v);
+  }
   const series = getSeries({
     siteFilter,
     ...trendRange,
@@ -188,7 +195,7 @@ export default function Home({ searchParams }: HomeProps) {
         <h3 className="mb-3 text-sm font-semibold">
           TOP 20 인기 상품 {usingCustomRange ? "" : "(이번 달)"}
         </h3>
-        <TopProductsTable rows={topProducts} />
+        <TopProductsTable rows={topProducts} qs={detailQs.toString()} />
       </div>
     </div>
   );

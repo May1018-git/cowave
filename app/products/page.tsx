@@ -46,6 +46,13 @@ export default function ProductsPage({ searchParams }: ProductsPageProps) {
   const visibleRows = showAll ? allRows : allRows.slice(0, TOP_LIMIT);
   const totalCount = allRows.length;
 
+  // 상품 상세로 넘어갈 때 이어붙일 필터. 목록 전용 파라미터(q, all)는 제외.
+  const detailQs = new URLSearchParams();
+  for (const key of ["site", "cat", "cat1", "cat2", "cat3", "from", "to"] as const) {
+    const v = searchParams[key];
+    if (v) detailQs.set(key, v);
+  }
+
   let summary: string;
   if (nameQuery) {
     summary = `"${nameQuery}" 검색 결과 ${totalCount.toLocaleString()}건`;
@@ -69,7 +76,7 @@ export default function ProductsPage({ searchParams }: ProductsPageProps) {
 
       <div className="card space-y-4 p-5">
         <ProductsSearchBar />
-        <TopProductsTable rows={visibleRows} />
+        <TopProductsTable rows={visibleRows} qs={detailQs.toString()} />
         <LoadMoreToggle
           showingAll={showAll}
           totalCount={totalCount}

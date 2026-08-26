@@ -334,11 +334,14 @@ export function getAchievement(query: BaseQuery): Achievement | null {
 }
 
 export function getMallBreakdown(
-  query: BaseQuery & { manufacturer?: string },
+  query: BaseQuery & { manufacturer?: string; productId?: string },
 ): MallBreakdownRow[] {
   const manufacturer = query.manufacturer?.trim() || "";
+  const productId = query.productId?.trim() || "";
   let sales = filterSales(query);
-  if (manufacturer) {
+  if (productId) {
+    sales = sales.filter((s) => s.productId === productId);
+  } else if (manufacturer) {
     const productsById = getProductsById();
     sales = sales.filter((s) => {
       const p = productsById.get(s.productId);
@@ -346,13 +349,17 @@ export function getMallBreakdown(
     });
   }
   // 1회 패스로 몰별 집계 (기존엔 MALLS(23) × sales 전체 필터 = 23패스)
-  const agg = new Map<string, { gross: number; orders: number; commission: number }>();
+  const agg = new Map<
+    string,
+    { gross: number; orders: number; quantity: number; commission: number }
+  >();
   let total = 0;
   for (const s of sales) {
     total += s.grossAmount;
-    const a = agg.get(s.mallId) ?? { gross: 0, orders: 0, commission: 0 };
+    const a = agg.get(s.mallId) ?? { gross: 0, orders: 0, quantity: 0, commission: 0 };
     a.gross += s.grossAmount;
     a.orders += 1;
+    a.quantity += s.quantity;
     a.commission += s.commission;
     agg.set(s.mallId, a);
   }
@@ -365,11 +372,17 @@ export function getMallBreakdown(
       mallName: m.name,
       grossAmount: gross,
       orders: a?.orders ?? 0,
+      quantity: a?.quantity ?? 0,
       commission: a?.commission ?? 0,
       share: total === 0 ? 0 : gross / total,
     };
   });
   return rows.sort((a, b) => b.grossAmount - a.grossAmount);
+}
+
+/** productId(= `M-모델번호` 또는 `C-상품코드`) 로 상품 단건 조회. */
+export function getProduct(id: string): Product | undefined {
+  return getProductsById().get(id);
 }
 
 export function getTopProducts(

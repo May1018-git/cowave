@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowDown, ArrowUp, Minus, Sparkles } from "lucide-react";
 import { cn, formatKRW, formatNumber, formatPercent } from "@/lib/utils";
 import { getCategoryPath } from "@/lib/category-map";
@@ -6,6 +7,8 @@ import type { ProductRankRow } from "@/lib/types";
 interface TopProductsTableProps {
   rows: ProductRankRow[];
   compact?: boolean;
+  /** 현재 사이트/기간/카테고리 필터를 담은 querystring. 상품 상세 링크에 이어붙인다. */
+  qs?: string;
 }
 
 function RankChange({ rank, prevRank }: { rank: number; prevRank: number | null }) {
@@ -39,31 +42,43 @@ function RankChange({ rank, prevRank }: { rank: number; prevRank: number | null 
 }
 
 function ProductCodeCell({
+  productId,
   modelNumber,
   productCode,
+  qs,
 }: {
+  productId: string;
   modelNumber?: string;
   productCode?: string;
+  qs?: string;
 }) {
+  if (!modelNumber && !productCode) {
+    return <span className="text-xs text-gray-300">—</span>;
+  }
+  const href = `/products/${encodeURIComponent(productId)}${qs ? `?${qs}` : ""}`;
   if (modelNumber) {
     return (
-      <span className="tabular-nums text-xs text-gray-600">{modelNumber}</span>
-    );
-  }
-  if (productCode) {
-    return (
-      <span
-        className="inline-flex items-center gap-1 rounded bg-gray-100 px-1.5 py-0.5 text-[11px] tabular-nums text-gray-500"
-        title="에누리 모델번호 미매핑 — 상품코드 표시"
+      <Link
+        href={href}
+        className="tabular-nums text-xs text-blue-600 hover:underline"
+        title="이 상품의 쇼핑몰별 상세매출 보기"
       >
-        {productCode}
-      </span>
+        {modelNumber}
+      </Link>
     );
   }
-  return <span className="text-xs text-gray-300">—</span>;
+  return (
+    <Link
+      href={href}
+      className="inline-flex items-center gap-1 rounded bg-gray-100 px-1.5 py-0.5 text-[11px] tabular-nums text-blue-600 hover:bg-gray-200 hover:underline"
+      title="에누리 모델번호 미매핑 — 상품코드 표시 · 클릭 시 쇼핑몰별 상세매출"
+    >
+      {productCode}
+    </Link>
+  );
 }
 
-export function TopProductsTable({ rows, compact }: TopProductsTableProps) {
+export function TopProductsTable({ rows, compact, qs }: TopProductsTableProps) {
   const colSpan = compact ? 5 : 7;
   return (
     <div className="table-scroll">
@@ -101,8 +116,10 @@ export function TopProductsTable({ rows, compact }: TopProductsTableProps) {
             {!compact && (
               <td className="py-2">
                 <ProductCodeCell
+                  productId={r.product.id}
                   modelNumber={r.product.modelNumber}
                   productCode={r.product.productCode}
+                  qs={qs}
                 />
               </td>
             )}

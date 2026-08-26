@@ -80,6 +80,7 @@ export interface MallBreakdownRow {
   mallName: string;
   grossAmount: number;
   orders: number;
+  quantity: number;
   commission: number;
   share: number;
 }
