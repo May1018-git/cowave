@@ -70,7 +70,14 @@ function readSheetFromBuffer(
   if (looksLikeHtml(buffer)) {
     const charset = detectCharset(buffer);
     const html = decode(buffer, charset);
-    const wb = XLSX.read(html, { type: "string" });
+    // raw: true — HTML 셀 텍스트를 숫자/날짜로 자동 추론하지 않고 원문 그대로 문자열로 둔다.
+    // 상품코드(13자리 바코드 등)를 숫자로 추론하면 SheetJS 의 General 서식이
+    // sheet_to_json(raw:false) 단계에서 지수표기("1.00085E+12")로 재포맷해버려
+    // 원래 정수 코드가 손실된다. 정작 원본 .xls 의 <td>에는 전체 자릿수가
+    // 온전히 들어있으므로(class="txt"), 우리 쪽 자동 추론만 꺼도 해결된다.
+    // 날짜·수량·매출액은 문자열 그대로 받아도 이후 로직(normalizeDate, Number())이
+    // 이미 문자열 입력을 전제로 파싱하므로 영향 없다.
+    const wb = XLSX.read(html, { type: "string", raw: true });
     return wb.Sheets[wb.SheetNames[0]] ?? null;
   }
   const wb = XLSX.read(buffer, { type: "buffer" });
