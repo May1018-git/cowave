@@ -1,9 +1,12 @@
+import Link from "next/link";
 import { ArrowDown, ArrowUp, Minus } from "lucide-react";
 import { cn, formatKRW, formatNumber, formatPercent } from "@/lib/utils";
 import type { DailyRow } from "@/lib/data-source";
 
 interface DailySalesTableProps {
   rows: DailyRow[];
+  /** 현재 사이트/카테고리 필터를 담은 querystring (from·to 제외). 상품 상세 링크에 이어붙인다. */
+  linkParams?: string;
 }
 
 const WEEKDAY = ["일", "월", "화", "수", "목", "금", "토"] as const;
@@ -34,7 +37,7 @@ function GrowthCell({ percent }: { percent: number | null }) {
   );
 }
 
-export function DailySalesTable({ rows }: DailySalesTableProps) {
+export function DailySalesTable({ rows, linkParams }: DailySalesTableProps) {
   // 최신 날짜가 위로 오도록. 차트는 시간순(왼→오른쪽)이 자연스럽고,
   // 표는 "오늘 것부터" 훑어보는 용도라 방향이 반대다.
   const sorted = [...rows].sort((a, b) => b.date.localeCompare(a.date));
@@ -77,7 +80,17 @@ export function DailySalesTable({ rows }: DailySalesTableProps) {
                   {WEEKDAY[wd]}
                 </td>
                 <td className="py-2 text-right tabular-nums">
-                  {formatKRW(r.grossAmount)}
+                  {r.orders > 0 ? (
+                    <Link
+                      href={`/products?${linkParams ? `${linkParams}&` : ""}from=${r.date}&to=${r.date}&all=1`}
+                      className="text-blue-600 hover:underline"
+                      title="이 날 판매된 상품 상세 보기"
+                    >
+                      {formatKRW(r.grossAmount)}
+                    </Link>
+                  ) : (
+                    formatKRW(r.grossAmount)
+                  )}
                 </td>
                 <td className="py-2 text-right tabular-nums text-gray-600">
                   {formatNumber(r.orders)}

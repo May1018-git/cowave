@@ -22,12 +22,24 @@ interface DailyPageProps {
   };
 }
 
+function buildProductLinkParams(searchParams: DailyPageProps["searchParams"]) {
+  const usp = new URLSearchParams();
+  for (const key of ["site", "cat", "cat1", "cat2", "cat3"] as const) {
+    const v = searchParams[key];
+    if (v) usp.set(key, v);
+  }
+  return usp.toString();
+}
+
 export default function DailyPage({ searchParams }: DailyPageProps) {
   const siteFilter = (searchParams.site as SiteFilter) ?? "all";
   // 별도 기간을 고르지 않았으면 "오늘"이 아니라 실제 업로드된 마지막 날짜
   // 기준 최근 30일로 — 업로드가 며칠 밀려도 빈 화면이 뜨지 않는다.
   const range = resolveRange(searchParams.from, searchParams.to, getDataLast30Range);
   const categoryPrefix = resolveCategoryPrefix(searchParams);
+  // 매출 셀 → /products 링크에 붙일 필터. from/to 는 날짜별로 그날 하루로
+  // 바꿔 넣으므로 여기서는 사이트/카테고리 필터만 들고 간다.
+  const productLinkParams = buildProductLinkParams(searchParams);
 
   const rows = getDailyBreakdown({ siteFilter, ...range, categoryPrefix });
 
@@ -95,7 +107,10 @@ export default function DailyPage({ searchParams }: DailyPageProps) {
 
       <div className="card p-5">
         <h3 className="mb-3 text-sm font-semibold">일자별 상세</h3>
-        <DailySalesTable rows={rows} />
+        <p className="mb-2 text-[11px] text-gray-400">
+          매출 금액을 클릭하면 그날 판매된 상품별 상세를 볼 수 있어요.
+        </p>
+        <DailySalesTable rows={rows} linkParams={productLinkParams} />
       </div>
     </div>
   );
