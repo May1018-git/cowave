@@ -6,6 +6,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "@/lib/nav";
+import { ExternalLinks } from "./ExternalLinks";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
@@ -86,6 +87,7 @@ export function MobileNav() {
                 );
               })}
             </nav>
+            <ExternalLinks />
           </aside>
         </div>
       )}

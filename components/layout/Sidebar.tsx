@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "@/lib/nav";
+import { ExternalLinks } from "./ExternalLinks";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -39,6 +40,7 @@ export function Sidebar() {
           );
         })}
       </nav>
+      <ExternalLinks />
       <div className="border-t p-4 text-xs text-gray-400">
         © {new Date().getFullYear()} Cowave
       </div>

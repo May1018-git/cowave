@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   XCircle,
   Loader2,
+  ExternalLink,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,9 @@ import {
   validateUploadFilename,
   checkFileSizeWarning,
 } from "@/lib/upload-validation";
+import { EXTERNAL_LINKS } from "@/lib/nav";
+
+const GMV_RAW_DATA_LINK = EXTERNAL_LINKS.find((l) => l.href.includes("OrderData_Raw"))!;
 
 type Status = "pending" | "uploading" | "committing" | "done" | "error" | "rejected";
 interface FileEntry {
@@ -129,7 +133,18 @@ export function UploadForm({ cacheSizeMB }: UploadFormProps) {
   return (
     <div className="mx-auto max-w-3xl space-y-4">
       <header className="space-y-1">
-        <h1 className="text-xl font-bold text-gray-900">데이터 업로드</h1>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h1 className="text-xl font-bold text-gray-900">데이터 업로드</h1>
+          <a
+            href={GMV_RAW_DATA_LINK.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100"
+          >
+            <ExternalLink size={13} />
+            {GMV_RAW_DATA_LINK.label}
+          </a>
+        </div>
         <p className="text-sm text-gray-500">
           새로 받은 매출 xls 파일을 여기에 올리면 대시보드에 자동 반영됩니다.
           (업로드 후 약 2-3분 소요)

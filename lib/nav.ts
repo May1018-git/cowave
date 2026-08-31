@@ -17,3 +17,9 @@ export const NAV_ITEMS = [
   { href: "/brands", label: "제조사/브랜드", icon: Factory },
   { href: "/upload", label: "데이터 업로드", icon: Upload },
 ];
+
+/** 에누리 관리자 사이트로 나가는 외부 링크. 새 탭으로 열려 현재 화면(필터 등)을 잃지 않는다. */
+export const EXTERNAL_LINKS = [
+  { href: "http://jca.enuri.com/ecrm/Popular/Main.asp", label: "인기도 바로가기" },
+  { href: "http://jca.enuri.com/ecrm/popular/OrderData_Raw.asp", label: "GMV Raw Data 바로가기" },
+];
