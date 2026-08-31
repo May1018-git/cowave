@@ -124,8 +124,9 @@ for (const cat of CATS) {
   const yoyMalls = getMallBreakdown(yq);
   const yoyMallAmt = new Map(yoyMalls.map((m) => [m.mallId, m.grossAmount]));
 
-  // 전년에 매출이 있었는데 올해 0인 몰 (채널 단절).
+  // 전년에 매출이 있었는데 올해 0인 몰.
   // 전년 1백만 미만은 노이즈라 제외 — 보고할 만한 채널만 남긴다.
+  const COUPANG_MALL_ID = "7861";
   const deadMalls = yoyMalls
     .filter(
       (m) =>
@@ -135,8 +136,12 @@ for (const cat of CATS) {
 
   console.log(`\n### 쇼핑몰`);
   for (const m of deadMalls.slice(0, 3)) {
+    // 쿠팡은 2025년 하반기 에누리 입점 계약이 종료돼 매출이 전면 0으로
+    // 잡힌다(전년 대비 수치가 크게 벌어지는 주 원인). 다른 몰의 매출 소멸과
+    // 성격이 다르므로 구분해서 표기한다.
+    const reason = m.mallId === COUPANG_MALL_ID ? "계약종료" : "매출 소멸";
     console.log(
-      `- ${m.mallName}: 0원 / YoY -100% (${fmtDelta(-m.grossAmount)}) ▶ 채널 단절`,
+      `- ${m.mallName}: 0원 / YoY -100% (${fmtDelta(-m.grossAmount)}) ▶ ${reason}`,
     );
   }
 
